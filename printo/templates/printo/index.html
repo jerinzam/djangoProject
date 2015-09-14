@@ -1,0 +1,263 @@
+<html>
+<meta name="csrf-token" content="{{csrf_token}}"> 
+<head>
+	<title>GROUND</title>
+	{% load staticfiles %}
+	<script type="text/javascript" src="{% static 'printo/js/libs/jquery-1.9.1.js' %}"/></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'printo/css/index.css' %}">
+
+
+</head>
+<body>
+
+	<div class="header">
+	</div>
+
+	<div class="well msg_bus">
+
+		<div id="message">
+		</div>
+
+	</div>
+	<div class="container">
+
+	</div>
+
+	<div class="modal">
+	</div>
+
+
+<script type="text/template" id="resetlinksend">
+	<h3>A mail has been sent to you</h3>
+	<h5>Please click on the link to reset your password</h5>
+</script>
+
+<script type="text/template" id="header_template">
+	<h1>PRINTO</h1>
+  
+  <button class="btn <%- buttonname.toLowerCase() %> auth_button"><%- buttonname %></button>
+    <%if(username != '') { %>
+      <div id="image"> 
+        <img class="profile-img img-circle " src="<%- urll %>" ></img>
+      </div>
+      <h3 id="greeting">
+        <a  class="profile">Hi <%- username%> </a>
+      </h3>
+    <% } %> 
+</script>
+
+<script type="text/template" id="verifyemail_template">
+	<h3>Successfully Registered</h3>
+	<h5>Please verify your account by clicking on the link sent to your mail</h5>
+</script>
+
+<script type="text/template" id="registration_template">
+	<div class="hero-unit">
+		  <form class="form-horizontal">
+		    <div class="control-group">
+		      <label class="control-label" for="username">Username</label>
+		      <div class="controls">
+		        <input type="text" id="username" placeholder="Username">
+		      </div>
+		    </div>
+		    <div class="control-group">
+		      <label class="control-label" for="password">Password</label>
+		      <div class="controls">
+		        <input type="password" id="password" placeholder="Password">
+		      </div>
+		    </div>
+		    <div class="control-group">
+		      <label class="control-label" for="email">Email</label>
+		      <div class="controls">
+		        <input type="email" id="email" placeholder="Email">
+		      </div>
+		    </div>
+		    <div class="control-group">
+		      <div class="controls">
+		        <button type="submit" class="btn" id="registration">Register</button>
+		      </div>
+		    </div>
+		  </form>
+	</div>
+</script>
+
+<script type="text/template" id="forgotpwd">
+
+	<input id="email" placeholder="email"/>
+	<button class="btn btn-primary sendpwd"> Help me </button>
+</script>
+
+<script type="text/template" id="pwdreset">
+
+	<input id="password1" type="password" placeholder="Enter new password">
+	<br><br>
+	<input id="password2" type="password" placeholder="Re-enter new password">
+	<br>
+	<button class="btn btn-primary pwdreset">Save my new password</button>
+
+</script>
+<script type="text/template" id="login_template">
+	
+	<div class="hero-unit">
+	  <form class="form-horizontal">
+	    <div class="control-group">
+	      <label class="control-label" for="inputEmail">Username</label>
+	      <div class="controls">
+	        <input type="text" id="username" placeholder="Username">
+	      </div>
+	    </div>
+	    <div class="control-group">
+	      <label class="control-label" for="inputPassword">Password</label>
+	      <div class="controls">
+	        <input type="password" id="password" placeholder="Password">
+	      </div>
+	    </div>
+	    <div class="control-group">
+	      <div class="controls">
+	        <button type="submit" class="btn" id="login">Sign in</button>
+	      </div>
+	    </div>
+	  </form>
+	  <button class="forgotpwd">Forgot Password</button>
+	</div>
+</script>
+
+<script type="text/template" id="profile_template">
+	<div class="profile-header ">
+		<div class="row">
+
+			<div class="logo-container col-md-2 ">
+					<h2 class="profile-logo">printo</h2>
+
+			</div>
+			<div id="navmenu" class="col-md-4">
+				<ul>
+					<li><a href="">USER</a></li>
+					<li><a href="">SHOP</a></li>
+				</ul>
+			</div>	
+		</div>
+		<div class="row">
+			<div class="col-md-3  profile-username">
+				<p><%- first_name %> <%- last_name %></p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row profile-container ">
+		<div class="profile-left col-md-4 ">
+			<div class="profile-left-inner border">
+				<img src="<%- profile_picture %>"/>
+				<input id="fileInput" type="file" name="fileInput">
+			</div>
+			<div  class="profile-left-inner profile-left-2 ">
+				<p><span>0</span> <br>orders</p>
+			</div>
+		</div>
+		<div class="hero-unit profile-right col-md-4 ">
+			<table>
+				<tr>
+					
+					<td>name:</td> <td> <input id="username" placeholder="username" value="<%- username %>"/></td>
+				
+				</tr>
+
+				<tr>
+					<td>email:</td><td><input id="email" placeholder="email" value="<%- email %>" disabled/></td>
+				</tr>
+				<tr>
+					<td>first name:</td> <td><input id="firstname" placeholder="firstname"  value="<%- first_name %>"/></td>
+				</tr>
+				<tr>
+					<td>last name:</td><td><input id="lastname" placeholder="lastname" value="<%- last_name %> "/></td>
+				</tr>
+				<tr>
+					<td>shop name:</td><td><input id="companyname" placeholder="company name" value="<%- company_name %>"  /></td>
+				</tr>
+			</table>
+			
+			
+		</div>	
+		<button type="button" class="btn btn-primary btn-xs  profile_save" >Save Changes</button>
+	</div>
+</script>
+
+<script type="text/template" id="home_template">
+	<div class="hero-unit">
+		<h1>Home Page</h1>
+		<% if(user){
+			%>
+				<h4>Hello <%= user.firstName %> <%= user.lastName %> </h4>
+
+				<a href="#profile">Profile</a>
+				<br>
+				<a class="logout">Log out</a>
+			<%
+		}else{
+			%>
+				<a href="#login">Log In</a>
+				<br>
+				<a href="#registration">Register</a>
+			<%
+		}%>
+	</div>
+</script>
+
+<script type="text/javascript">
+
+	// Implementing the loader
+		$body = $("body");
+
+		$(document).on({
+		    ajaxStart: function() { $body.addClass("loading");    },
+		     ajaxStop: function() { $body.removeClass("loading"); }    
+		});	
+
+
+		var csrf_func_bb = function(d){
+             var _sync = Backbone.sync;
+              Backbone.sync = function(method, model, options){
+                options.beforeSend = function(xhr){
+                  var token = d || $('meta[name="csrf-token"]').attr('content');
+                   console.log("in backbone setup",token,"---------",xhr,xhr.promise().promise)
+                  xhr.setRequestHeader('X-CSRFToken', token);
+
+                };
+                return _sync(method, model, options);
+              };
+            }
+        var csrf_func_ajax = function(){
+          function csrfSafeMethod(method) {
+                  // these HTTP methods do not require CSRF protection
+                  return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+              }
+
+              $.ajaxSetup({
+                  beforeSend: function(xhr, settings) {
+                      if (!this.crossDomain) {
+
+                        var token = $('meta[name="csrf-token"]').attr('content');
+                        console.log("in ajax setup",token)
+                          xhr.setRequestHeader("X-CSRFToken", token);
+                      }
+                  }
+              });
+        }
+        window.onload = function() {
+
+            csrf_func_bb()
+            csrf_func_ajax();  
+            // bootstrap
+        }	
+</script>
+
+
+	<script type="text/javascript" src="{% static 'printo/js/libs/underscore.js' %}"/></script>
+    <script type="text/javascript" src="{% static 'printo/js/libs/json2.js' %}"/></script>
+    <script type="text/javascript" src="{% static 'printo/js/libs/backbone.js' %}"/></script>
+    <script type="text/javascript" src="{% static 'printo/js/main.js' %}"/></script>
+</body>
+</html>

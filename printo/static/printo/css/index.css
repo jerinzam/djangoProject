@@ -1,0 +1,253 @@
+.right{
+	width:40%;
+	margin-left: 50%;
+	margin-top: 0px;
+	}
+.left{
+
+	float: left;
+	width: 40%;
+}
+.container{
+	text-align: center;
+	margin-top: 0px;
+}
+table{
+	width:100%;
+	text-align:center;
+}
+
+table th{
+	padding-left:0px; 
+	border-bottom: 1px solid black;
+}
+table tr td{
+	padding-left:0px; 
+	border-bottom: 1px solid black;
+}
+.detailTable table {
+	border: 1px solid black;
+	margin:auto auto;
+	text-align: left;
+	width:40%;
+}
+
+.detailTable table tr td{
+	border-bottom:none; 
+	padding: 20px;
+
+}
+.btn{
+	padding:10px;
+	margin-top: 10px;
+
+}
+.auth_button{
+	float: right;
+	margin-right: 20px;;
+	margin-top: -50px;
+}
+#greeting{
+	float:right;
+	margin-right: 180px;
+	margin-top: -45px;
+}
+.header{
+
+	margin-top: 1px;
+	border-bottom: 1px solid black;
+}
+
+#options{
+	margin-top:20px;
+	margin-left: 20px;
+}
+#image{
+	
+	/*border-radius: 60px;*/
+	width:50px;
+	float: right;
+	margin-right: 110px;
+	margin-top: -55px;
+	height:50px;
+	/*border: 1px solid black;*/
+}
+
+#image img{
+	width: 100%;
+    height: 100%;
+    /*overflow: hidden;*/
+	/*height:auto;*/
+}
+/*.form-inline .form-group{
+    margin-left: 0;
+    margin-right: 0;
+}*/
+
+.width-50{
+	width: 50%;
+}
+.width-33{
+	width: 33%;
+}
+.userpic{
+	padding-top: 10px;
+	height:50%;
+	/*border: 2px solid black;*/
+	float: left
+}
+.userpic img{
+	width: 50%;
+    height: 50%;
+}
+.userform{
+	/*border: 2px solid black;*/
+	float: right;
+}
+.userform input.form-control {
+
+   display: block;  /* allows labels to sit on input when inline */
+   margin-bottom: 15px; /* gives padding to bottom of inline inputs */
+}
+
+.row .input{
+	margin-left:-0px;
+	/*margin-right: 0px; */
+}
+
+.msg_bus{
+	text-align: center;
+	height:50px;
+}
+
+
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+
+body.loading {
+    overflow: hidden;   
+}
+
+
+body.loading .modal {
+    display: block;
+}
+
+
+.profile-header{
+	margin:-30px;
+	border-bottom: 1px solid grey;
+
+}
+.logo-container{
+
+}
+.profile-logo{
+	font-size: 40px;
+	border-right: 2px solid lightgrey;
+}
+.border{
+
+	border:2px solid black;
+}
+
+#navmenu ul {
+	margin: 0; 
+	padding: 0; 
+	margin-top:8.5%;
+	margin-left: -20px;
+
+	list-style-type: none; 
+	list-style-image: none; 
+	width:50%;
+	
+}
+#navmenu li {
+	
+	display: inline; 
+}
+#navmenu ul li a {
+	font-weight: bold;
+	border:2px solid grey;
+	text-decoration:none;  
+	margin: 4px;
+	padding: 5px 20px 5px 20px; 
+	color: white;
+	background: grey;
+}
+#navmenu ul li a:hover {
+	border:2px solid orange;
+	color: orange;
+	background: white; 
+}
+
+.profile-username{
+	height:28px;
+	text-align: left;
+	font-size: 20px;
+	padding-left: 55px;
+}
+.profile-container{
+	padding:1px; 
+	margin-top: 40px;
+}
+.profile-left{
+	/*margin: auto;*/
+	width:15%;
+	padding-left: 10px;
+}
+
+.profile-right{
+	margin-left: 2px;
+}
+#profile-left-inner{
+	
+	/*border-radius: 60px;*/
+	width:100%;
+	
+	margin-right: 0px;
+	margin-top: 0px;
+	height:20px;
+	/*min-height: 40px;*/
+	/*border: 1px solid black;*/
+}
+
+.profile-left-2{
+	margin-top: 2px;
+}
+.profile-right table{
+	text-align: left;
+	width:80%;
+}
+.profile-right table tr td{
+	/*padding-left: -30px;*/
+	padding-top: 5px;
+	border:none;
+}
+
+.profile_save{
+	float: left;
+	margin-left:-70px;
+	margin-top:110px;
+	/*float:right;*/
+	/*margin-right: 90px;*/
+}
+
+
+
+
+
+
+
