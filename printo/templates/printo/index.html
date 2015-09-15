@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
+
     <link rel="stylesheet" type="text/css" href="{% static 'printo/css/index.css' %}">
 
 
@@ -36,7 +39,10 @@
 </script>
 
 <script type="text/template" id="header_template">
-	<h1>PRINTO</h1>
+	<h1 class="logo">PRINTO</h1>
+	
+	<a href="#home" class="home-icon"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a>
+	
   
   <button class="btn <%- buttonname.toLowerCase() %> auth_button"><%- buttonname %></button>
     <%if(username != '') { %>
@@ -142,44 +148,62 @@
 		</div>
 		<div class="row">
 			<div class="col-md-3  profile-username">
-				<p><%- first_name %> <%- last_name %></p>
+				<p><%- user.first_name %> <%- user.last_name %></p>
 			</div>
 		</div>
 	</div>
+	
 
 	<div class="row profile-container ">
 		<div class="profile-left col-md-4 ">
-			<div class="profile-left-inner border">
-				<img src="<%- profile_picture %>"/>
-				<input id="fileInput" type="file" name="fileInput">
+			<div class="fileinput fileinput-new" data-provides="fileinput">
+			  <div class="fileinput-preview thumbnail" data-trigger="fileinput" style="width: 200px; height: 150px;">
+			  	<img src="<%- userimage %>"/>
+			  </div>
+			  <div>
+			    <span class="btn btn-default btn-file"><span class="fileinput-new">Select image</span><span class="fileinput-exists">Change</span><input type="file" name="fileInput"></span>
+
+			    <a href="#" class="btn btn-default fileinput-exists" data-dismiss="fileinput">Remove</a>
+			  </div>
 			</div>
 			<div  class="profile-left-inner profile-left-2 ">
 				<p><span>0</span> <br>orders</p>
 			</div>
 		</div>
-		<div class="hero-unit profile-right col-md-4 ">
-			<table>
-				<tr>
-					
-					<td>name:</td> <td> <input id="username" placeholder="username" value="<%- username %>"/></td>
-				
-				</tr>
-
-				<tr>
-					<td>email:</td><td><input id="email" placeholder="email" value="<%- email %>" disabled/></td>
-				</tr>
-				<tr>
-					<td>first name:</td> <td><input id="firstname" placeholder="firstname"  value="<%- first_name %>"/></td>
-				</tr>
-				<tr>
-					<td>last name:</td><td><input id="lastname" placeholder="lastname" value="<%- last_name %> "/></td>
-				</tr>
-				<tr>
-					<td>shop name:</td><td><input id="companyname" placeholder="company name" value="<%- company_name %>"  /></td>
-				</tr>
-			</table>
-			
-			
+		<div class="hero-unit profile-right col-md-6  ">
+			<form class="form-horizontal">
+				  <div class="form-group">
+				    <label for="username" class="col-sm-4 control-label">Username</label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="username" placeholder="Email" value="<%- user.username %>">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="inputEmail3" class="col-sm-4 control-label">Email</label>
+				    <div class="col-sm-6">
+				      <input type="email" class="form-control" id="inputEmail3" placeholder="Email" value="<%- user.email %>">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="firstname" class="col-sm-4 control-label">First name</label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="firstname" placeholder="Email" value="<%- user.first_name %>">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="lastname" class="col-sm-4 control-label">Last name</label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="lastname" placeholder="Email" value="<%- user.last_name %>">
+				    </div>
+				  </div>
+				  <div class="form-group">
+				    <label for="companyname" class="col-sm-4 control-label">Company name</label>
+				    <div class="col-sm-6">
+				      <input type="text" class="form-control" id="companyname" placeholder="Email" value="<%- user.company_name%>">
+				    </div>
+				  </div>
+				  
+			</form>	
 		</div>	
 		<button type="button" class="btn btn-primary btn-xs  profile_save" >Save Changes</button>
 	</div>
@@ -246,10 +270,12 @@
                   }
               });
         }
+        
         window.onload = function() {
 
             csrf_func_bb()
             csrf_func_ajax();  
+            
             // bootstrap
         }	
 </script>

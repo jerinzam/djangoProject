@@ -596,13 +596,28 @@ var ProfileView = BaseView.extend({
 	},
 
 	render : function(){
-		this.$el.html(this.template(this.model.toJSON()));
+		var url1= "/static/media/documents/"
+
+		// console.log("image:",url1.concat(this.model.toJSON().profile_picture.split('/').pop()))
+		if (this.model.toJSON().profile_picture)
+			this.$el.html(this.template({'user':this.model.toJSON(),'userimage':url1.concat(this.model.toJSON().profile_picture.split('/').pop())}));
+		else
+			this.$el.html(this.template({'user':this.model.toJSON(),'userimage':''}));
 		return this;
 	},
 	save :function(){
 		console.log("image:",$('input[name="fileInput"]')[0].files[0])
 		var data = new FormData();
-		data.append('profile_picture',$('input[name="fileInput"]')[0].files[0])
+		if (!$('input[name="fileInput"]')[0].files[0])
+			pic = this.model.toJSON().profile_picture
+		else
+			pic = $('input[name="fileInput"]')[0].files[0]
+		data.append('profile_picture',pic)
+		data.append('username',$("#username").val())
+		data.append('email',$('#email').val())
+		data.append('first_name',$('#firstname').val())
+		data.append('last_name',$('#lastname').val())
+		data.append('company_name',$('#companyname').val())
 		userEdit = $.ajax({
 			url:'/rest-auth/user/',
 			data:data,

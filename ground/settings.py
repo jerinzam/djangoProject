@@ -79,6 +79,7 @@ EMAIL_HOST_PASSWORD = 'bestfrends'
 DEFAULT_FROM_EMAIL = 'jerinzam@gmail.com'
 
 # added for images
+MEDIA_ROOT = os.path.join(BASE_DIR, 'printo/static/media')
 MEDIA_URL = '/printo/static/media/'
 
 

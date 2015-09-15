@@ -5,13 +5,13 @@ from .models import UserProfile
 class UserSerializer(UserDetailsSerializer):
 
     company_name = serializers.CharField(source="userprofile.company_name",allow_blank=True)
-    profile_picture = serializers.ImageField(source="userprofile.profile_picture")
+    profile_picture = serializers.ImageField(source="userprofile.profile_picture",required=None)
 
     class Meta(UserDetailsSerializer.Meta):
         fields = UserDetailsSerializer.Meta.fields + ('company_name','profile_picture',)  
 
     def update(self, instance, validated_data):
-        import ipdb; ipdb.set_trace();
+        # import ipdb; ipdb.set_trace();
         # validated_data2 = validated_data
         profile_data = validated_data.pop('userprofile', {})
         company_name = profile_data.get('company_name')
