@@ -1,4 +1,6 @@
-var User = Backbone.Model.extend({
+
+
+var UserModelr = Backbone.Model.extend({
 
 })
 
@@ -10,6 +12,7 @@ var BaseView = Backbone.View.extend({
 			this.remove();
 		}
 	});
+
 var BaseRouter = Backbone.Router.extend({
 	before: function(){},
 	after: function(){},
@@ -272,7 +275,7 @@ var SessionModel = Backbone.Model.extend({
 
 			Session.always(callback);
 		}
-	});
+});
 
 var UserModel = Backbone.Model.extend({
 
@@ -286,13 +289,189 @@ var UserModel = Backbone.Model.extend({
 		},
 
 		urlRoot : '/rest-auth/user/'
-	});
+});
+
+var Document = Backbone.Model.extend({
+	initialize:function(){
+		console.log('in DocumentModel')
+	},
+	fileAttribute:'doc',
+	urlRoot : 'http://127.0.0.1:8000/api/documents/'
+})
+
+var DocumentView = BaseView.extend({
+	tagName:'tr',
+	template:_.template($('#document_item_template').html()),
+	render:function(){
+		this.$el.append(this.template(this.model.toJSON()))
+		return this;
+	}
+})
+
+var DocumentList = Backbone.Collection.extend({
+	model:Document,
+	initialize:function(){
+		console.log('in DocumentList')
+	},
+	url: 'http://127.0.0.1:8000/api/documents/'
+	// 
+})
+
+var DocumentListView = BaseView.extend({
+	initialize:function(){
+		this.collection.on('add',this.addOne,this);
+		this.collection.on('update',this.addOne,this);
+		this.collection.on('change',this.addAll,this);
+		this.collection.on('reset',this.addAll,this);
+	},
+	events:{
+		'click #add_document' : 'createdocument',
+		'change .doc_type' : 'typeModal',
+		'click #doc_type' : 'typeModal',
+		'change .doc_type_choice':'tester'
+	},
+	template:_.template($('#documents_template').html()),
+	tester:function(){
+		console.log("in tester",$('input[name=options]:checked', '.doc_type_choice').val())
+		$("#doc_type").val($('input[name=options]:checked', '.doc_type_choice').val());
+		
+		if($('input[name=options]:checked', '.doc_type_choice').val()=="Textbook"){
+			var textView = new TextView()
+			$('.doc_type_form').html(textView.render().el)
+		}else{	
+			var noteView = new NoteView()
+			$('.doc_type_form').html(noteView.render().el)
+		}
+	},
+	typeModal:function(){
+		console.log("in here for animmmmmmmmmmm")
+		$("#mainform").animate({
+        	 right: 190
+        },"slow",function(){
+        	$('.bs-example2-modal-sm').modal('toggle')
+        });
+	},
+	createdocument:function(){
+		console.log("in DocumentListView: createDocument",this.collection)
+		console.log("collegename:",$('#collegename').val())
+		var newDocument = new Document()
+		var data = new FormData()
+		data.append('doc',$('input[name="pdfUpload"]')[0].files[0])
+		data.append('name',$('#doc_name').val());
+
+		newDocument.save(data,{
+			data:data,
+			processData: false,
+			contentType: false
+		}).done(function(data){
+			console.log("in DocumentListView: createDoument() : done")
+		}).fail(function(){
+			console.log("in DocumentListView: createDoument() : fail")
+		})
+		this.collection.add(newDocument)
+	},
+	addOne:function(model){
+		console.log("in DocumentListView: addOne()")
+		console.log("model:",model)
+		var view = new DocumentView({model:model})
+		$('#documentlist').append(view.render().el)
+	},
+	addAll:function(){
+		console.log("in DocumentListView: addAll(),",this.collection.length)
+		$('tr').not(function(){if ($(this).has('th').length){return true}}).remove();
+		this.collection.forEach(this.addOne,this)
+		return this
+	},
+	render:function(){
+		this.$el.html(this.template())
+		return this
+	}
+})
+
+var Order = Backbone.Model.extend({
+	urlRoot:'/api/orders/'
+	// 
+})
+
+var OrderView = BaseView.extend({
+	tagName:'tr',
+	template:_.template($("#order_item_template").html()),
+	render:function(){
+		this.$el.append(this.template(this.model.toJSON()))
+		return this
+	}
+})
+
+var OrderList = Backbone.Collection.extend({
+	model:Order,
+	initialize:function(){
+
+		_.bindAll(this,'onFetch','executeLongPolling');
+	},
+	url:'/api/orders/',
+	longPolling : false,
+  	intervalMinutes : 20,
+	startLongPolling : function(intervalMinutes){
+		console.log("in startLongPolling---",this.intervalMinutes)
+	    this.longPolling = true;
+	    if( intervalMinutes ){
+	      this.intervalMinutes = intervalMinutes;
+	    }
+	    this.executeLongPolling();
+	},
+	stopLongPolling : function(){
+	this.longPolling = false;
+	},
+	executeLongPolling : function(){
+		console.log("in execute polling")
+		this.fetch({success : this.onFetch,update:true});
+	},
+	onFetch : function () {
+		console.log("in fetch after polling----",this.longPolling)
+		if( this.longPolling ){
+		  setTimeout(this.executeLongPolling, 1000  * 10); // in order to update the view each N minutes
+		 }
+	}
+})
+
+var OrderListView = BaseView.extend({
+	initialize:function(){
+		this.collection.on('add',this.addOne,this);
+		this.collection.on('update',this.addOne,this);
+		this.collection.on('change',this.addAll,this);
+		this.collection.on('reset',this.addAll,this);
+	},
+	template:_.template($('#home_template').html()),
+	events:{},
+	
+	addOne:function(model){
+		var view = new OrderView({model:model})
+		$('#orderslist').append(view.render().el)
+	},
+	addAll:function(){
+		console.log("in OrderListView(): addAll() : length",this.collection.length)
+		$('tr').not(function(){if ($(this).has('th','thead').length){return true}}).remove();
+		this.collection.forEach(this.addOne,this)
+	},
+	render:function(){
+		this.$el.html(this.template());
+		return this;
+	}
+
+})
 
 var Session = new SessionModel()
+
+var orderList = new OrderList()
+var orderListView = new OrderListView({collection:orderList})
+var documentList = new DocumentList()
+var documentListView = new DocumentListView({collection:documentList})
+// orderList.startLongPolling();
 
 var Router = BaseRouter.extend({
 
 		routes : {
+			'mydocs' : 'showmydocs',
 			'resetlinksend' : 'showResetLinkSend',
 			'forgotpwd' : 'showForgotPwd',
 			'pwdreset/:uid/:token' : 'showResetForm',
@@ -302,12 +481,11 @@ var Router = BaseRouter.extend({
 			'profile' : 'showProfile',
 			'home' : 'showHome',
 			'':'showHome'
-
 		},
 
 		// Routes that need authentication and if user is not authenticated
 		// gets redirect to login page
-		requresAuth : ['#profile','#home',''],
+		requresAuth : ['#profile','#home','',"#mydocs"],
 
 		// Routes that should not be accessible if user is authenticated
 		// for example, login, register, forgetpasword ...
@@ -364,6 +542,26 @@ var Router = BaseRouter.extend({
 			setView(view);
 		},
 
+		showmydocs:function(){
+			console.log("in router(): showmydocs(): ")
+			documentList.fetch({reset:true}).done(function(data){
+				console.log("in router(): showmydocs(): - done ")
+			})
+			var headerView = new HeaderView();
+			$('.header').html(headerView.render('Logout').el)
+			// $('.document_container').html(documentListView.render())
+			this.changeView(documentListView);
+			documentListView.delegateEvents();
+			$('.bs-example2-modal-sm').on('hidden.bs.modal', function (e) {
+			  console.log("in here222222 for animmmmmmmmmmm")
+					
+			        $("#mainform").animate({
+			        	 right: 0
+			        },"slow");
+			        
+			})	
+		},
+
 		showResetLinkSend:function(){
 			console.log("in router(): showResetLinkSend()")
 			var resetlinksend = new ResetLinkSendView()
@@ -411,7 +609,6 @@ var Router = BaseRouter.extend({
 			console.log("in router: showVerifyEmail()")
 			var verifyEmailView = new VerifyEmailView();
 			this.changeView(verifyEmailView)
-
 		},
 
 		showProfile : function(){
@@ -440,11 +637,16 @@ var Router = BaseRouter.extend({
 		},
 
 		showHome : function(){
-			console.log("in router: showHome()")
+
+			orderList.fetch({reset:true}).done(function(data){
+				console.log("in router(): showHome(): - done ",data)
+			})
+			
 			var homeView = new HomeView();
 			var headerView = new HeaderView();
+			
 			$('.header').html(headerView.render('Logout').el)
-			this.changeView(homeView);
+			this.changeView(orderListView);
 		},
 
 		fetchError : function(error){
@@ -460,7 +662,25 @@ var Router = BaseRouter.extend({
 				});
 			}
 		}
-	});
+});
+
+var TextView = BaseView.extend({
+	template:_.template($('#textbook_template').html()),
+	render:function(){
+		this.$el.append(this.template())
+		return this
+	}
+
+})
+
+var NoteView = BaseView.extend({
+	template:_.template($('#notebook_template').html()),
+	render:function(){
+		this.$el.append(this.template())
+		return this
+	}
+
+})
 
 var RegistrationView = BaseView.extend({
 	template: _.template($('#registration_template').html()),
@@ -555,6 +775,7 @@ var LoginView = BaseView.extend({
 
 		render : function(){
 			this.$el.html(this.template());
+			console.log("loginview: render(), this:",this)
 			return this;
 		},
 
@@ -701,6 +922,7 @@ var ApplicationModel = Backbone.Model.extend({
 		});
 	}
 });
+
 
 var app = new ApplicationModel();
 app.start(); 

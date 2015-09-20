@@ -48,10 +48,24 @@ INSTALLED_APPS = (
     'rest_auth.registration',
     'allauth',
     'allauth.account',
+    #
+    'userroles',
+)
+
+
+
+#added for userroles
+USER_ROLES = (
+    'owner',
+    'employee',
 )
 
 # added for handling user-profile
 # AUTH_PROFILE_MODULE = 'api.UserProfile'
+
+
+
+
 
 
 # added for allauth
@@ -125,7 +139,7 @@ WSGI_APPLICATION = 'ground.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }

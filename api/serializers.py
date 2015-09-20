@@ -1,11 +1,25 @@
 from rest_framework import serializers
 from rest_auth.serializers import UserDetailsSerializer
-from .models import UserProfile
+from .models import UserProfile, Document, Order
+
+
+class DocumentSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    class Meta:
+        model = Document
+        fields = ('id','name', 'doc', 'owner')
+
+class OrderSerializer(serializers.ModelSerializer):
+    order_doc = serializers.ReadOnlyField(source='order_doc.name')
+    shop = serializers.ReadOnlyField(source='shop.company_name')
+    class Meta:
+        model = Order
+        fields = ('id', 'customer', 'order_doc','status','shop','comments')
+
 
 class UserSerializer(UserDetailsSerializer):
-
-    company_name = serializers.CharField(source="userprofile.company_name",allow_blank=True)
-    profile_picture = serializers.ImageField(source="userprofile.profile_picture",required=None)
+    company_name = serializers.CharField(source="userprofile.company_name", allow_blank=True)
+    profile_picture = serializers.ImageField(source="userprofile.profile_picture", required=None)
 
     class Meta(UserDetailsSerializer.Meta):
         fields = UserDetailsSerializer.Meta.fields + ('company_name','profile_picture',)  

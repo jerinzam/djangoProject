@@ -50,7 +50,7 @@ table tr td{
 .auth_button{
 	float: right;
 	margin-right: 20px;;
-	margin-top: -50px;
+	margin-top: -70px;
 }
 #greeting{
 	float:right;
@@ -126,7 +126,7 @@ table tr td{
 }
 
 
-.modal {
+.modal2 {
     display:    none;
     position:   fixed;
     z-index:    1000;
@@ -146,7 +146,7 @@ body.loading {
 }
 
 
-body.loading .modal {
+body.loading .modal2 {
     display: block;
 }
 
@@ -267,6 +267,20 @@ body.loading .modal {
 	margin-top: -35px;
 	margin-left: 200px;
 }
+.mycopies-icon{
+	color:grey;
+	float:left;
+	margin-top: -35px;
+	margin-left: 230px;
+}
+#documentlist{
+	margin-left:10px;
+}
+#documentlist th{
+	text-align: center;
+}
+.bs-example2-modal-sm{
 
-
+		margin-left: 40%;
+}
 

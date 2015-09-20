@@ -4,17 +4,24 @@
 	<title>GROUND</title>
 	{% load staticfiles %}
 	<script type="text/javascript" src="{% static 'printo/js/libs/jquery-1.9.1.js' %}"/></script>
+	<!-- bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <!-- jasny-bootstrap -->
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/css/jasny-bootstrap.min.css">
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jasny-bootstrap/3.1.3/js/jasny-bootstrap.min.js"></script>
-
+	<!-- gmd -->
+	<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.indigo-pink.min.css">
+	<script src="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.min.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<!-- mine -->
     <link rel="stylesheet" type="text/css" href="{% static 'printo/css/index.css' %}">
 
 
 </head>
 <body>
+	
 
 	<div class="header">
 	</div>
@@ -29,10 +36,10 @@
 
 	</div>
 
-	<div class="modal">
+	<div class="modal2">
 	</div>
 
-
+	
 <script type="text/template" id="resetlinksend">
 	<h3>A mail has been sent to you</h3>
 	<h5>Please click on the link to reset your password</h5>
@@ -40,11 +47,16 @@
 
 <script type="text/template" id="header_template">
 	<h1 class="logo">PRINTO</h1>
+	<div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <a href="#home" class="home-icon"><span class="glyphicon glyphicon-home" ></span></a>
+            <a href="#mydocs" class="mycopies-icon"><span class="glyphicon glyphicon-folder-open"></span></a>
+          </ul>
+    </div>
 	
-	<a href="#home" class="home-icon"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a>
-	
-  
-  <button class="btn <%- buttonname.toLowerCase() %> auth_button"><%- buttonname %></button>
+	<br>
+
+  	<button class="btn <%- buttonname.toLowerCase() %> auth_button"><%- buttonname %></button>
     <%if(username != '') { %>
       <div id="image"> 
         <img class="profile-img img-circle " src="<%- urll %>" ></img>
@@ -211,23 +223,116 @@
 
 <script type="text/template" id="home_template">
 	<div class="hero-unit">
-		<h1>Home Page</h1>
-		<% if(user){
-			%>
-				<h4>Hello <%= user.firstName %> <%= user.lastName %> </h4>
-
-				<a href="#profile">Profile</a>
-				<br>
-				<a class="logout">Log out</a>
-			<%
-		}else{
-			%>
-				<a href="#login">Log In</a>
-				<br>
-				<a href="#registration">Register</a>
-			<%
-		}%>
+		<h3>Home Page</h3>
+		<table class="col-md-5 mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp" id="orderslist">
+		  <thead>
+		    <tr>
+		    	<th class="mdl-data-table__cell--non-numeric" >Customer</th>
+				<th >File</th>
+				<th>Qty</th>
+		      
+		    </tr>
+		  </thead>
+		  <tbody>
+		   
+		  </tbody>
+		</table>
 	</div>
+</script>
+
+<script type="text/template" id="order_item_template">
+	<td class="mdl-data-table__cell--non-numeric"><a href="#" id="getDetails"> <%= customer %> </a></td>
+  	<td><a target="_blank" href="<%- order_doc %>"><%- order_doc %></a></td>
+  	<td>1</td>
+	
+</script>
+
+<script type="text/template" id="document_item_template">
+	<td><a href="#" id="getDetails"> <%= name %> </a></td>
+  	<td><a target="_blank" href="<%- doc %>"><%- name %></a></td>
+</script>
+
+<script type="text/template" id="documents_template">
+	<div class="document_container">
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Add a DOCUMENT</button>
+
+		<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+		  <div class="modal-dialog modal-md " id="mainform">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="exampleModalLabel">ADD a DOCUMENT</h4>
+		      	</div>
+		      	<div class="modal-body">
+			      <div id="documents">
+			        <input type="textbox" class="form-control" id="doc_name" placeholder="File Name">
+			        <br>
+			        <input id="pdfUpload" type="file" name="pdfUpload"/>
+			        <br>
+			        
+				    <input type="button" class="btn" id="doc_type" value="Choose a type"/>
+			       	<br>
+			       	<br>
+			      </div>
+			    </div>
+			    <div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal" id="add_document">ADD</button>
+			    </div>
+		    </div>
+		  </div>
+		</div>
+
+
+		<div class="modal fade bs-example2-modal-sm collegeform2" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="exampleModalLabel">DOCUMENT TYPE</h4>
+		      	</div>
+		      	<div class="modal-body">
+			    	<div class="btn-group doc_type_choice" data-toggle="buttons">
+						  <label class="btn btn-primary active">
+						    <input type="radio" name="options" id="note" autocomplete="off" value="Note" checked> Note
+						  </label>
+						  <label class="btn btn-primary">
+						    <input type="radio" name="options" id="text" autocomplete="off" value="Textbook" > Textbook
+						  </label>
+					</div>
+					<div class="doc_type_form">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal" id="type_done">Done</button>
+			    </div>
+		    </div>
+		  </div>
+		</div>
+		<br>
+
+	  	<table id="documentlist" class="col-md-4">
+	  		<th>name </th>
+	  		<th>link</th>	
+	   	</table>
+	</div>
+</script>
+
+<script type="text/template"></script>
+<script type="text/template" id="textbook_template">
+	<br>
+	<input class="form-control" id="text_author" type="text" placeholder="Author"/>
+	<br>
+	<input class="form-control" id="text_edition" type="text" placeholder="Edition"/>
+	<br>
+</script>
+
+<script type="text/template" id="notebook_template">
+	<br>
+	<input class="form-control" id="note_author" type="text" placeholder="Owner"/>
+	<br>
+	<input class="form-control" id="note_topic" type="text" placeholder="Topic"/>
+	<br>
 </script>
 
 <script type="text/javascript">
@@ -285,5 +390,6 @@
     <script type="text/javascript" src="{% static 'printo/js/libs/json2.js' %}"/></script>
     <script type="text/javascript" src="{% static 'printo/js/libs/backbone.js' %}"/></script>
     <script type="text/javascript" src="{% static 'printo/js/main.js' %}"/></script>
+   
 </body>
 </html>
