@@ -48,14 +48,17 @@ table tr td{
 
 }
 .auth_button{
-	float: right;
-	margin-right: 20px;;
-	margin-top: -70px;
+	/*float: right;*/
+	margin-right: 10px;;
+	margin-top: 5px;
 }
-#greeting{
+/*#greeting{
 	float:right;
 	margin-right: 180px;
 	margin-top: -45px;
+}*/
+.profile{
+	font-weight: bold;
 }
 .header{
 
@@ -121,8 +124,11 @@ table tr td{
 }
 
 .msg_bus{
+	margin-top: 53px;
 	text-align: center;
-	height:50px;
+	padding-top: 3px;
+	padding-bottom: 3px;
+	height:35px;
 }
 
 
@@ -261,7 +267,7 @@ body.loading .modal2 {
 	border:none;
 }
 
-.home-icon{
+/*.home-icon{
 	color:grey;
 	float:left;
 	margin-top: -35px;
@@ -272,15 +278,42 @@ body.loading .modal2 {
 	float:left;
 	margin-top: -35px;
 	margin-left: 230px;
-}
+}*/
 #documentlist{
-	margin-left:10px;
+
+	margin-left:2px;
+	padding-left: 5px;
+	padding-right: 5px;
+	margin-right:2px;
+	border-left: 1px solid grey;
+	border-right: 1px solid grey;
+	min-height: 500px;
 }
 #documentlist th{
 	text-align: center;
 }
 .bs-example2-modal-sm{
-
 		margin-left: 40%;
 }
 
+.white{
+	color:white;
+}
+.black{
+	color:black;
+}
+
+.leftmenu{
+	padding: 0px;
+	margin-right: 0px;
+	margin-left: 10%;
+}
+
+.rightmenu{
+	padding: 0px;
+	right:0px;
+}
+
+.document_container{
+
+}

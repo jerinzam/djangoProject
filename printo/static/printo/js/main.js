@@ -94,6 +94,55 @@ var SessionModel = Backbone.Model.extend({
 			}
 		},
 
+		emp_register:function(credentials){
+			console.log("in SessionModel:register()")
+			var that = this;
+			var register = $.ajax({
+				url:'/rest-auth/registration/employee/',
+				data : credentials,
+				type : 'POST'
+			})
+
+			register.done(function(response){
+				console.log("in SessionModel:register().done")
+				var successMessage = new NotificationView({
+				    type: 'success',
+				    text: 'New shop created !!!',
+				    
+				});
+				
+
+				console.log("registration response:",response)
+				console.log("old csrf:", $('meta[name="csrf-token"]').attr('content') )
+				console.log("new csrf:",response.csrf_token)
+				$('meta[name="csrf-token"]').attr('content',response.csrf_token)
+				console.log("setting session.authenticated to false")
+				// that.set('authenticated', false);
+				// that.set('user', '');
+				dashboardView.myShops();
+
+			})
+
+			register.fail(function(response){
+				
+				console.log("in SessionModel:register() - fail")
+				that.unset('redirectFrom');
+				var errors = JSON.parse(response.responseText)
+				var keys = [];
+				for (var key in errors) {
+				  if (errors.hasOwnProperty(key)) {
+				    keys.push(key);
+				  }
+				}
+				var successMessage = new NotificationView({
+				    type: 'success',
+				    text: errors[keys[0]][0]
+				    
+				});
+				console.log('response - ',errors[keys[0]][0])
+			})
+		},
+
 		register:function(credentials){
 			console.log("in SessionModel:register()")
 			var that = this;
@@ -211,9 +260,11 @@ var SessionModel = Backbone.Model.extend({
 				console.log("new csrf:",response.csrf_token)
 				$('meta[name="csrf-token"]').attr('content',response.csrf_token)
 				console.log("setting session.authnticated to:",response.auth==="true")
+				console.log("user role is:",response.role)
 				that.set('authenticated',response.auth);
 				console.log("session.authnticated=",that.get("authenticated"))
-				that.set('user', JSON.stringify(response.user));
+				that.set('user', response.user);
+				that.set('user_role',response.role);
 				if(that.get('redirectFrom')){
 					console.log('session.redirectFrom:',that.get('redirectFrom'))
 					var path = that.get('redirectFrom');
@@ -221,7 +272,14 @@ var SessionModel = Backbone.Model.extend({
 					console.log('session.redirectFrom:',that.get('redirectFrom'))
 					Backbone.history.navigate(path, { trigger : true });
 				}else{
-					Backbone.history.navigate('home', { trigger : true });
+					console.log("response.role:",response.role,JSON.stringify(response.role))
+					if (response.role == "owner"){
+						Backbone.history.navigate('dashboard', { trigger : true });
+					}
+					else if (response.role == "employee"){
+						Backbone.history.navigate('home', { trigger : true });
+					}
+					// Backbone.history.navigate('home', { trigger : true });
 				}
 			});
 			login.fail(function(response){
@@ -258,8 +316,10 @@ var SessionModel = Backbone.Model.extend({
 			Session.done(function(response){
 				console.log("sessionfetch - done")
 				console.log("setting sessions.authenticated to :",response.auth)
+				console.log("user is:",response.user)
 				that.set('authenticated', response.auth);
-				that.set('user', JSON.stringify(response.user));
+				that.set('user',response.user);
+				that.set('user_role',response.user_role)
 
 			});
 
@@ -290,7 +350,7 @@ var UserModel = Backbone.Model.extend({
 
 		urlRoot : '/rest-auth/user/'
 });
-
+// ============================================================
 var Document = Backbone.Model.extend({
 	initialize:function(){
 		console.log('in DocumentModel')
@@ -300,7 +360,7 @@ var Document = Backbone.Model.extend({
 })
 
 var DocumentView = BaseView.extend({
-	tagName:'tr',
+	
 	template:_.template($('#document_item_template').html()),
 	render:function(){
 		this.$el.append(this.template(this.model.toJSON()))
@@ -365,6 +425,7 @@ var DocumentListView = BaseView.extend({
 			contentType: false
 		}).done(function(data){
 			console.log("in DocumentListView: createDoument() : done")
+
 		}).fail(function(){
 			console.log("in DocumentListView: createDoument() : fail")
 		})
@@ -378,7 +439,8 @@ var DocumentListView = BaseView.extend({
 	},
 	addAll:function(){
 		console.log("in DocumentListView: addAll(),",this.collection.length)
-		$('tr').not(function(){if ($(this).has('th').length){return true}}).remove();
+		$('#documentlist').html('')
+		// $('tr').not(function(){if ($(this).has('th').length){return true}}).remove();
 		this.collection.forEach(this.addOne,this)
 		return this
 	},
@@ -387,7 +449,53 @@ var DocumentListView = BaseView.extend({
 		return this
 	}
 })
+// ============================================================
+var Shop = Backbone.Model.extend({
+})
 
+var ShopView =BaseView.extend({	
+	tagName:'tr',
+	initialize:function(){},
+	events:{},
+	template:_.template($('#shop_item_template').html()),
+	render:function(){
+		this.$el.html(this.template(this.model.toJSON()))
+		return this
+	}
+})
+
+var ShopList = Backbone.Collection.extend({
+	model:Shop,
+	url : '/api/shops/'
+})
+
+var ShopListView = BaseView.extend({
+	initialize:function(){
+		console.log("in ShopListView()")
+		this.collection.on('add',this.addOne,this)
+		this.collection.on('reset',this.addAll,this)
+	},
+	events:{
+
+	},
+	template:_.template($('#shops_template').html()),
+	addOne:function(shop){
+		var shopView = new ShopView({model:shop})
+		$('#shoplist').append(shopView.render().el)
+	},
+	addAll:function(){
+		console.log("in ShopListView: addAll(),",this.collection.length)
+		$('tr').not(function(){if ($(this).has('th').length){return true}}).remove();
+		this.collection.forEach(this.addOne,this)
+		return this
+	},
+	render:function(){
+		this.$el.html(this.template())
+		return this
+	},
+})
+
+// ============================================================
 var Order = Backbone.Model.extend({
 	urlRoot:'/api/orders/'
 	// 
@@ -442,8 +550,12 @@ var OrderListView = BaseView.extend({
 		this.collection.on('reset',this.addAll,this);
 	},
 	template:_.template($('#home_template').html()),
-	events:{},
-	
+	events:{
+		'click .emp' : 'test'
+	},
+	test:function(){
+		Session.emp_register()
+	},
 	addOne:function(model){
 		var view = new OrderView({model:model})
 		$('#orderslist').append(view.render().el)
@@ -457,36 +569,43 @@ var OrderListView = BaseView.extend({
 		this.$el.html(this.template());
 		return this;
 	}
-
 })
-
+// ============================================================
 var Session = new SessionModel()
 
 var orderList = new OrderList()
 var orderListView = new OrderListView({collection:orderList})
 var documentList = new DocumentList()
 var documentListView = new DocumentListView({collection:documentList})
+var shopList = new ShopList()
+var shopListView = new ShopListView({collection:shopList})
 // orderList.startLongPolling();
+
 
 var Router = BaseRouter.extend({
 
 		routes : {
-			'mydocs' : 'showmydocs',
+			'dashboard/addshop' : 'showAddShop',
+			'dashboard/myshops' : 'showMyShops',
+			'dashboard' 	: 'showDashboard',
+			'shops' 		: 'showShops',
+			'mydocs' 		: 'showmydocs',
 			'resetlinksend' : 'showResetLinkSend',
-			'forgotpwd' : 'showForgotPwd',
+			'forgotpwd' 	: 'showForgotPwd',
 			'pwdreset/:uid/:token' : 'showResetForm',
-			'verify-email' : 'showVerifyEmail',
-			'registration' : 'showRegistration',
-			'login' : 'showLogin',
-			'profile' : 'showProfile',
-			'home' : 'showHome',
-			'':'showHome'
+			'verify-email' 	: 'showVerifyEmail',
+			'registration' 	: 'showRegistration',
+			'login' 		: 'showLogin',
+			'profile' 		: 'showProfile',
+			'home' 			: 'showHome',
+			''				:'showHome'
 		},
 
 		// Routes that need authentication and if user is not authenticated
 		// gets redirect to login page
-		requresAuth : ['#profile','#home','',"#mydocs"],
-
+		requiresAuth : ['#profile','#home','',"#mydocs"],
+		// pages that can be accessed by owners only
+		onlyOwners : ['#dashboard','#dashboard/myshops','#dashboard/addshop'],
 		// Routes that should not be accessible if user is authenticated
 		// for example, login, register, forgetpasword ...
 		preventAccessWhenAuth : ['#login','#registration','#pwdreset','#forgotpwd'],
@@ -500,10 +619,14 @@ var Router = BaseRouter.extend({
 			console.log("Backbone.history.location.hash:",Backbone.history.location)
 			var isAuth = Session.get('authenticated') === "true";
 			var path = Backbone.history.location.hash;
-			var needAuth = _.contains(this.requresAuth, path);
+			var needAuth = _.contains(this.requiresAuth, path);
 			var cancleAccess = _.contains(this.preventAccessWhenAuth, path);
+
+			var needOwners = _.contains(this.onlyOwners, path)
+			var isEmployee = Session.get('user_role') === "employee"
 			console.log("needAuth:",needAuth)
 			console.log("!isAuth:",!isAuth)
+
 			if(needAuth && !isAuth){
 				//If user gets redirect to login because wanted to access
 				// to a route that requires login, save the path in session
@@ -514,6 +637,10 @@ var Router = BaseRouter.extend({
 				//User is authenticated and tries to go to login, register ...
 				// so redirect the user to home page
 				Backbone.history.navigate('home', { trigger : true });
+			}else if(needOwners && isEmployee){
+				console.log("Permission granted for OWNERS only !!!")
+				Backbone.history.navigate('', { trigger : true });
+
 			}else{
 				//No problem handle the route
 				console.log("in router: before(): going to next:")
@@ -536,20 +663,60 @@ var Router = BaseRouter.extend({
 					this.currentView.close();
 				}
 				this.currentView = view;
-				$('.container').html(view.render().$el);
+				$('.main-container').html(view.render().$el);
 			}
 
 			setView(view);
+		},
+		showAddShop:function(){
+			console.log("in router(): showDashboard(): ")
+			var headerView = new HeaderView();
+			$('.header').html(headerView.render('Logout').el)
+			
+			this.changeView(dashboardView);
+			dashboardView.addShop();
+
+		},
+		showMyShops:function(){
+			this.showDashboard()
+		},
+
+		showDashboard:function(){
+			console.log("in router(): showDashboard(): ")
+			var headerView = new HeaderView();
+			$('.header').html(headerView.render('Logout').el)
+			
+			this.changeView(dashboardView);
+			dashboardView.myShops();
+		},
+
+		showShops:function(){
+			
+			var headerView = new HeaderView();
+			$('.header').html(headerView.render('Logout').el)
+			shopList.fetch({reset:true})
+			.done(function(data){
+				console.log("No.of fetched shops are:",data.length)
+			})
+			this.changeView(shopListView);
 		},
 
 		showmydocs:function(){
 			console.log("in router(): showmydocs(): ")
 			documentList.fetch({reset:true}).done(function(data){
 				console.log("in router(): showmydocs(): - done ")
+				console.log("number of docs:", data.length)
 			})
+			var leftMenuView = new LeftMenuView();
+			$('.leftnav').html(leftMenuView.render().el)
+
+			var rightMenuView = new RightMenuView();
+			$('.rightnav').html(rightMenuView.render().el)
+
 			var headerView = new HeaderView();
 			$('.header').html(headerView.render('Logout').el)
 			// $('.document_container').html(documentListView.render())
+
 			this.changeView(documentListView);
 			documentListView.delegateEvents();
 			$('.bs-example2-modal-sm').on('hidden.bs.modal', function (e) {
@@ -664,13 +831,120 @@ var Router = BaseRouter.extend({
 		}
 });
 
+var AddShopView = BaseView.extend({
+	initialize:function(){},
+	events:{
+		'click .createshop':'createshop'
+	},
+	createshop:function(){
+		var shopname = $('#shopname').val()
+		var username = $('#username').val()
+		var password1 = $('#password1').val()
+		var password2 = $('#password2').val()
+
+		Session.emp_register({
+			'shopName':shopname,
+			'username' : username,
+			'password1' : password1,
+			'password2' : password2
+		})
+	},
+	template:_.template($('#addshop_template').html()),
+	render:function(){
+		this.$el.html(this.template({
+			'username' : Session.get('user')
+		}))
+		return this
+	}
+})
+
+var LeftMenuView = BaseView.extend({
+	initialize:function(){},
+	events:{
+		'click #add_document' : 'createdocument',
+		'change .doc_type' : 'typeModal',
+		'click #doc_type' : 'typeModal',
+		'change .doc_type_choice':'tester'
+	},
+	createdocument:function(){
+		documentListView.createdocument()
+	},
+	tester:function(){
+		console.log("in tester",$('input[name=options]:checked', '.doc_type_choice').val())
+		$("#doc_type").val($('input[name=options]:checked', '.doc_type_choice').val());
+		
+		if($('input[name=options]:checked', '.doc_type_choice').val()=="Textbook"){
+			var textView = new TextView()
+			$('.doc_type_form').html(textView.render().el)
+		}else{	
+			var noteView = new NoteView()
+			$('.doc_type_form').html(noteView.render().el)
+		}
+	},
+	typeModal:function(){
+		console.log("in here for animmmmmmmmmmm")
+		$("#mainform").animate({
+        	 right: 190
+        },"slow",function(){
+        	$('.bs-example2-modal-sm').modal('toggle')
+        });
+	},
+	template:_.template($('#leftMenu_template').html()),
+	render:function(){
+		this.$el.html(this.template())
+		return this
+	}
+})
+
+var RightMenuView = BaseView.extend({
+	initialize:function(){},
+	events:{},
+	template:_.template($('#rightMenu_template').html()),
+	render:function(){
+		this.$el.html(this.template())
+		return this
+	}
+})
+
+
+var DashboardView = BaseView.extend({
+	initialize:function(){
+		// this.myShops();
+	},
+	events:{
+		'click .myshops' : 'myShops',
+		'click .addshop' : 'addShop'
+	},
+	addShop:function(e){
+		if(e)
+		 { e.preventDefault() }
+		var addShopView = new AddShopView()
+		$('#dashboard_container').html(addShopView.render().el)
+		Backbone.history.navigate('dashboard/addshop')
+	},
+	myShops:function(e){
+		if(e)
+		 { e.preventDefault() }
+		shopList.fetch({reset:true})
+			.done(function(data){
+				console.log("No.of fetched shops are:",data.length)
+		})
+		$('#dashboard_container').html(shopListView.render().el)
+		Backbone.history.navigate('dashboard/myshops')
+	},
+	template:_.template($('#dashboard_template').html()),
+	render:function(){
+		this.$el.html(this.template())
+		return this;
+	}
+})
+
 var TextView = BaseView.extend({
 	template:_.template($('#textbook_template').html()),
 	render:function(){
 		this.$el.append(this.template())
 		return this
 	}
-
 })
 
 var NoteView = BaseView.extend({
@@ -679,7 +953,6 @@ var NoteView = BaseView.extend({
 		this.$el.append(this.template())
 		return this
 	}
-
 })
 
 var RegistrationView = BaseView.extend({
@@ -893,7 +1166,11 @@ var HeaderView = BaseView.extend({
 		'click .logout'  : 'logout',
 		'click .register': 'register',
 		'click .login'   : 'login',
-		'click .profile' : 'profile' 
+		'click .profile' : 'profile',
+		'click .shops' : 'shops'  
+	},
+	shops:function(){
+		// router.navigate("dashboard",{trigger:true})
 	},
 	register:function(){
 		router.navigate("registration",{trigger:true})
@@ -907,7 +1184,15 @@ var HeaderView = BaseView.extend({
 		});
 	},
 	render:function(buttonname){
-		this.$el.html(this.template({'buttonname':buttonname,'urll':'trial','username':''}))
+		var role = Session.get("user_role")
+		var username = Session.get("user")
+
+		this.$el.html(this.template({
+			'buttonname':buttonname,
+			'urll':'trial',
+			'username':username,
+			'role':role
+			}))
 		return this
 	}
 })
@@ -927,7 +1212,7 @@ var ApplicationModel = Backbone.Model.extend({
 var app = new ApplicationModel();
 app.start(); 
 var router = new Router();
-
+var dashboardView = new DashboardView()
 
 var NotificationView = Backbone.View.extend({
  
@@ -1008,8 +1293,6 @@ var NotificationView = Backbone.View.extend({
     }
  
 });
-
-
 
 $.ajaxSetup({
     statusCode: {

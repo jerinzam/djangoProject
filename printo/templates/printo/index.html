@@ -16,24 +16,27 @@
 	<script src="https://storage.googleapis.com/code.getmdl.io/1.0.4/material.min.js"></script>
 	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 	<!-- mine -->
+    
+   
     <link rel="stylesheet" type="text/css" href="{% static 'printo/css/index.css' %}">
+	
 
 
 </head>
 <body>
-	
 
 	<div class="header">
 	</div>
 
 	<div class="well msg_bus">
-
 		<div id="message">
 		</div>
-
 	</div>
-	<div class="container">
-
+	<div class="leftnav">
+	</div>
+	<div class="main-container">
+	</div>
+	<div class="rightnav">
 	</div>
 
 	<div class="modal2">
@@ -46,25 +49,42 @@
 </script>
 
 <script type="text/template" id="header_template">
-	<h1 class="logo">PRINTO</h1>
-	<div id="navbar" class="collapse navbar-collapse">
-          <ul class="nav navbar-nav">
-            <a href="#home" class="home-icon"><span class="glyphicon glyphicon-home" ></span></a>
-            <a href="#mydocs" class="mycopies-icon"><span class="glyphicon glyphicon-folder-open"></span></a>
-          </ul>
-    </div>
-	
-	<br>
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+	  	<div class="container-fluid">
+		    <div class="navbar-header">
+		      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		      </button>
+		      <a class="navbar-brand" href="#">PRINTO</a>
+		    </div>
+		    <div id="navbar" class="navbar-collapse collapse">
 
-  	<button class="btn <%- buttonname.toLowerCase() %> auth_button"><%- buttonname %></button>
-    <%if(username != '') { %>
-      <div id="image"> 
-        <img class="profile-img img-circle " src="<%- urll %>" ></img>
-      </div>
-      <h3 id="greeting">
-        <a  class="profile">Hi <%- username%> </a>
-      </h3>
-    <% } %> 
+		      <ul class="nav navbar-nav navbar-right">
+		      	<% if(username != null) { %>
+		        <li><a href="#home" class="home-icon"><span class="glyphicon glyphicon-home white" ></span></a></li>
+		        <li><a href="#mydocs" class="mycopies-icon"><span class="glyphicon glyphicon-folder-open"></span></a></li>
+		     
+		        <li><a href="#">Profile</a></li>
+		        <li><a href="#">Help</a></li>
+		        <li>
+			        <a  class="profile">Hi <%- username %> </a>
+			    </li>
+			    <% } %> 
+		        <li> <button class="btn btn-sm <%- buttonname.toLowerCase() %> auth_button"><%- buttonname %></button></li>
+		      </ul>
+		      
+			    <% if(username != null) { %>
+		      <form class="navbar-form navbar-right">
+		        <input type="text" class="form-control" placeholder="Search...">
+		      </form>
+		      <% } %>
+
+		    </div>
+	  	</div>
+	</nav>
 </script>
 
 <script type="text/template" id="verifyemail_template">
@@ -222,13 +242,14 @@
 </script>
 
 <script type="text/template" id="home_template">
+	<button class="emp">Employee</button>
 	<div class="hero-unit">
 		<h3>Home Page</h3>
-		<table class="col-md-5 mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp" id="orderslist">
+		<table class="col-md-5" id="orderslist">
 		  <thead>
 		    <tr>
-		    	<th class="mdl-data-table__cell--non-numeric" >Customer</th>
-				<th >File</th>
+		    	<th>Customer</th>
+				<th>File</th>
 				<th>Qty</th>
 		      
 		    </tr>
@@ -243,20 +264,19 @@
 <script type="text/template" id="order_item_template">
 	<td class="mdl-data-table__cell--non-numeric"><a href="#" id="getDetails"> <%= customer %> </a></td>
   	<td><a target="_blank" href="<%- order_doc %>"><%- order_doc %></a></td>
-  	<td>1</td>
-	
+  	<td>1</td>	
 </script>
 
-<script type="text/template" id="document_item_template">
-	<td><a href="#" id="getDetails"> <%= name %> </a></td>
-  	<td><a target="_blank" href="<%- doc %>"><%- name %></a></td>
-</script>
-
-<script type="text/template" id="documents_template">
-	<div class="document_container">
-		<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bs-example-modal-sm">Add a DOCUMENT</button>
-
-		<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+<script type="text/template" id="leftMenu_template">
+	<div class="col-md-2 sidebar leftmenu ">
+          <ul class="nav nav-sidebar">
+            <li><a role="button" class="addshop" data-toggle="modal" data-target=".bs-example-modal-sm">Upload a Document</a>
+            </li>
+            <li><a href="" class="mydocuments">My Documents</a></li>
+            <li><a href="" class="myshops">Orders</a></li>
+          </ul>	
+    </div>
+    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 		  <div class="modal-dialog modal-md " id="mainform">
 		    <div class="modal-content">
 		    	<div class="modal-header">
@@ -309,16 +329,116 @@
 		    </div>
 		  </div>
 		</div>
-		<br>
+</script>
 
-	  	<table id="documentlist" class="col-md-4">
+<script type="text/template" id="rightMenu_template">
+	<div class="col-md-2 sidebar rightmenu">
+          <ul class="nav nav-sidebar">
+            
+            <li><a href="" class="mydocuments">Filter</a></li>
+            <li><a href="" class="myshops">Orders</a></li>
+          </ul>
+</script>
+
+<script type="text/template" id="document_item_template">
+	<div class="panel panel-default">
+			<div class="panel-heading" role="tab" id="heading_<%- name %>">
+			  
+			    <a role="button" data-toggle="collapse" data-parent="#documentlist" href="#<%- name %>" aria-expanded="true" aria-controls="<%- name %>">
+			      <%- name %>
+			    </a>		  
+
+			</div>
+			<div id="<%- name %>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_<%- name %>">
+			  <div class="panel-body">
+			    this is the body
+			  </div>
+			</div>
+		</div>
+	</div>	
+</script>
+
+<script type="text/template" id="documents_template">
+	<div class="document_container">
+	   	<div class="panel-group col-md-4" id="documentlist" role="tablist" aria-multiselectable="true">
+		</div>
+	</div>
+</script>
+
+<script type="text/template" id="shop_item_template">
+	<td><a href="#" id="shopPage"> <%= shopName %> </a></td>
+  	<td><a target="">Running</a></td>
+</script>
+
+<script type="text/template" id="shops_template">
+	<h5>Shops</h5>
+	<table id="shoplist" class="col-md-4">
 	  		<th>name </th>
-	  		<th>link</th>	
-	   	</table>
+	  		<th>status</th>	
+	</table>
+</script>
+
+<script type="text/template" id="addshop_template">
+	<div class="col-md-4">
+		<div class="form-group">
+		    <label for="shopname">Shop Name</label>
+		    <input type="text" class="form-control" id="shopname" placeholder="Shop Name">
+		</div>
+		<div class="form-group">
+		    <label for="owner">Owner</label>
+		    <input type="text" class="form-control" id="owner" value="<%- username %>" disabled>
+		</div>
+		<div class="form-group">
+		    <label for="username">Username</label>
+		    <input type="email" class="form-control" id="username" placeholder="Username">
+		</div>
+		<div class="form-group">
+		    <label for="password1">Password</label>
+		    <input type="password" class="form-control" id="password1" placeholder="Password">
+		</div>
+		<div class="form-group">
+		    <label for="password2">Re-enter Password</label>
+		    <input type="password" class="form-control" id="password2" placeholder="Password">
+		</div>
+		<button type="submit" class="btn btn-primary createshop">Create my SHOP</button>
+	</div>
+</script>
+
+<script type="text/template" id="dashboard_template">
+	<div class="container-fluid">
+      	<div class="row">
+	        <div class="col-sm-3 col-md-2 sidebar ">
+		          <ul class="nav nav-sidebar">
+		            <li ><a href="" class="addshop">Add a Shop</a></li>
+		            <li><a href="" class="mydocuments">My Documents</a></li>
+		            <li><a href="" class="myshops">Shops</a></li>
+		          </ul>
+		          <%
+			          // <ul class="nav nav-sidebar">
+			           
+			          //  <li><a href="">Nav item</a></li>
+			          //   <li><a href="">Nav item again</a></li>
+			          //   <li><a href="">One more nav</a></li>
+			          //   <li><a href="">Another nav item</a></li>
+			          //   <li><a href="">More navigation</a></li>
+			          // </ul>
+			          // <ul class="nav nav-sidebar">
+			          //   <li><a href="">Nav item again</a></li>
+			          //   <li><a href="">One more nav</a></li>
+			          //   <li><a href="">Another nav item</a></li>
+			          // </ul>
+		          %>
+	        </div>
+	        <div id="dashboard_container" class="col-md-10">
+		        
+	        </div>
+
+		</div>
 	</div>
 </script>
 
 <script type="text/template"></script>
+
 <script type="text/template" id="textbook_template">
 	<br>
 	<input class="form-control" id="text_author" type="text" placeholder="Author"/>
@@ -390,6 +510,9 @@
     <script type="text/javascript" src="{% static 'printo/js/libs/json2.js' %}"/></script>
     <script type="text/javascript" src="{% static 'printo/js/libs/backbone.js' %}"/></script>
     <script type="text/javascript" src="{% static 'printo/js/main.js' %}"/></script>
+    <script type="text/javascript" src="{% static 'printo/js/menu-js/modernizr.custom.js' %}"/></script>
+    <script type="text/javascript" src="{% static 'printo/js/menu-js/ytmenu.js' %}"/></script>
+   
    
 </body>
 </html>

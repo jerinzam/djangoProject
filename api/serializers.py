@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from rest_auth.serializers import UserDetailsSerializer
-from .models import UserProfile, Document, Order
+from .models import UserProfile, Document, Order, Shop
 
 
 class DocumentSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='owner.username')
+    owner = serializers.ReadOnlyField(source='owner.owner.username')
     class Meta:
         model = Document
-        fields = ('id','name', 'doc', 'owner')
+        fields = ('doc_id','name', 'doc', 'owner')
 
 class OrderSerializer(serializers.ModelSerializer):
     order_doc = serializers.ReadOnlyField(source='order_doc.name')
@@ -15,6 +15,14 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('id', 'customer', 'order_doc','status','shop','comments')
+
+class ShopSerializer(serializers.ModelSerializer):
+    employee = serializers.ReadOnlyField(source='employee.username')
+    owner = serializers.ReadOnlyField(source='owner.owner.username')
+    class Meta:
+        model = Shop
+        fields = ('shop_id', 'employee', 'owner','shopName')
+
 
 
 class UserSerializer(UserDetailsSerializer):
@@ -44,4 +52,5 @@ class UserSerializer(UserDetailsSerializer):
             profile.company_name = ''
             profile.profile_picture = ''
             profile.save()
+
         return instance
