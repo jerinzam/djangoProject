@@ -42,14 +42,12 @@ table tr td{
 	padding: 20px;
 
 }
-.btn{
-	padding:10px;
-	margin-top: 10px;
-
-}
+	
 .auth_button{
 	/*float: right;*/
 	margin-right: 10px;;
+	
+	padding:10px;
 	margin-top: 5px;
 }
 /*#greeting{
@@ -292,7 +290,7 @@ body.loading .modal2 {
 #documentlist th{
 	text-align: center;
 }
-.bs-example2-modal-sm{
+.sub-modal{
 		margin-left: 40%;
 }
 
@@ -314,6 +312,35 @@ body.loading .modal2 {
 	right:0px;
 }
 
-.document_container{
+.modal.fade .modal-dialog {
+  -webkit-transform: translate(0, 0%);
+  -ms-transform: translate(0,0%);
+  transform: translate(0, 0%);
+  -webkit-transition: -webkit-transform .5s ease-out;
+  -moz-transition: -moz-transform .5s ease-out;
+  -o-transition: -o-transform .5s ease-out;
+  transition: transform .5s ease-out;
+}
 
+.shop th{
+	text-align: center
+}
+
+#dashboard_container{
+	margin-left: 0px;
+	border-left: 1px solid grey
+}
+.dashboard-sidebar{
+	text-align: center;
+	margin-right: 0px;
+	padding-left: 0px;
+	padding-right: 0px;
+
+}
+
+#shopheader{
+	font-weight: bold;
+	padding: 5px;
+	background-color:lightgreen;
+	text-align: center;
 }

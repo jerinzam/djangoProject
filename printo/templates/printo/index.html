@@ -78,7 +78,7 @@
 		      
 			    <% if(username != null) { %>
 		      <form class="navbar-form navbar-right">
-		        <input type="text" class="form-control" placeholder="Search...">
+		        <input type="text" id="searchdoc" class="form-control" placeholder="Search...">
 		      </form>
 		      <% } %>
 
@@ -270,13 +270,17 @@
 <script type="text/template" id="leftMenu_template">
 	<div class="col-md-2 sidebar leftmenu ">
           <ul class="nav nav-sidebar">
+          	<li id="shopheader"><%- shop_name %></li>
+          	<% if(user_role == "owner"){ %>
+          	<li><a href="#dashboard" class="mydocuments">DASHBOARD</a></li>
+          	<% } %>
             <li><a role="button" class="addshop" data-toggle="modal" data-target=".bs-example-modal-sm">Upload a Document</a>
             </li>
-            <li><a href="" class="mydocuments">My Documents</a></li>
+            <li><a href="#mydocs" class="mydocuments">My Documents</a></li>
             <li><a href="" class="myshops">Orders</a></li>
           </ul>	
     </div>
-    <div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal fade bs-example-modal-sm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
 		  <div class="modal-dialog modal-md " id="mainform">
 		    <div class="modal-content">
 		    	<div class="modal-header">
@@ -289,8 +293,12 @@
 			        <br>
 			        <input id="pdfUpload" type="file" name="pdfUpload"/>
 			        <br>
-			        
-				    <input type="button" class="btn" id="doc_type" value="Choose a type"/>
+			       
+			        	
+				    	<input type="button" class="btn" id="doc_type" value="Choose file type"/>
+				    	<input type="button" class="btn" id="course" value="Choose a Course"/>
+			      
+				    
 			       	<br>
 			       	<br>
 			      </div>
@@ -303,12 +311,39 @@
 		</div>
 
 
-		<div class="modal fade bs-example2-modal-sm collegeform2" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+		<div class="modal fade bs-example2-modal-sm sub-modal type-modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
 		  <div class="modal-dialog modal-sm">
 		    <div class="modal-content">
 		    	<div class="modal-header">
 			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			        <h4 class="modal-title" id="exampleModalLabel">DOCUMENT TYPE</h4>
+		      	</div>
+		      	<div class="modal-body">
+			    	<div class="btn-group doc_type_choice" data-toggle="buttons">
+						  <label class="btn btn-primary active">
+						    <input type="radio" name="options" id="note" autocomplete="off" value="Note" checked> Note
+						  </label>
+						  <label class="btn btn-primary">
+						    <input type="radio" name="options" id="text" autocomplete="off" value="Textbook" > Textbook
+						  </label>
+					</div>
+					<div class="doc_type_form">
+
+					</div>
+				</div>
+				<div class="modal-footer">
+			        <button type="button" class="btn btn-default" data-dismiss="modal" id="type_done">Done</button>
+			    </div>
+		    </div>
+		  </div>
+		</div>
+
+		<div class="modal fade bs-example3-modal-sm sub-modal course-modal"  data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+		  <div class="modal-dialog modal-sm">
+		    <div class="modal-content">
+		    	<div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="exampleModalLabel">COURSES</h4>
 		      	</div>
 		      	<div class="modal-body">
 			    	<div class="btn-group doc_type_choice" data-toggle="buttons">
@@ -366,15 +401,23 @@
 </script>
 
 <script type="text/template" id="shop_item_template">
-	<td><a href="#" id="shopPage"> <%= shopName %> </a></td>
+	<td><a href="#mydocs" class="getshop" id="shopPage"> <%= shopName %> </a></td>
+	<td><%- employee %></td>
+	<td>0</td>
+	<td></td>
   	<td><a target="">Running</a></td>
+  	<td><button class="btn btn-sm btn-primary">Deactivate</button></td>
 </script>
 
 <script type="text/template" id="shops_template">
 	<h5>Shops</h5>
-	<table id="shoplist" class="col-md-4">
-	  		<th>name </th>
-	  		<th>status</th>	
+	<table class="table shop" id="shoplist" class="col-md-4">
+	  		<th>Name </th>
+	  		<th>Username</th>
+	  		<th>No.of orders</th>
+	  		<th>Created On</th>
+	  		<th>Status</th>	
+	  		<th></th>
 	</table>
 </script>
 
@@ -407,11 +450,11 @@
 <script type="text/template" id="dashboard_template">
 	<div class="container-fluid">
       	<div class="row">
-	        <div class="col-sm-3 col-md-2 sidebar ">
+	        <div class="col-sm-3 col-md-2 sidebar dashboard-sidebar">
 		          <ul class="nav nav-sidebar">
-		            <li ><a href="" class="addshop">Add a Shop</a></li>
+		            <li ><a role="button" class="addshop">Add a Shop</a></li>
 		            <li><a href="" class="mydocuments">My Documents</a></li>
-		            <li><a href="" class="myshops">Shops</a></li>
+		            <li><a role="button" class="myshops">Shops</a></li>
 		          </ul>
 		          <%
 			          // <ul class="nav nav-sidebar">

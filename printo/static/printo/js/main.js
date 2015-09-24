@@ -277,7 +277,8 @@ var SessionModel = Backbone.Model.extend({
 						Backbone.history.navigate('dashboard', { trigger : true });
 					}
 					else if (response.role == "employee"){
-						Backbone.history.navigate('home', { trigger : true });
+						Backbone.history.navigate('mydocs', { trigger : true });
+						that.set('shop_name',response.shopname);
 					}
 					// Backbone.history.navigate('home', { trigger : true });
 				}
@@ -373,7 +374,27 @@ var DocumentList = Backbone.Collection.extend({
 	initialize:function(){
 		console.log('in DocumentList')
 	},
-	url: 'http://127.0.0.1:8000/api/documents/'
+	url: 'http://127.0.0.1:8000/api/documents/',
+	search : function(letters){
+		if(letters == "") {
+			console.log("letters empty")
+			return this};
+		
+		var pattern = new RegExp(letters,"gi");
+		// var collection = this.filter(function(model) {
+  //               return _.some(_.values(model.pick("name")), function(value) {
+  //               	console.log("value:",value)
+  //               	console.log("~value.toLowerCase().indexOf(letters):",~value.toLowerCase().indexOf(letters))
+  //                   return ~value.toLowerCase().indexOf(letters);
+  //               });
+  //           });
+		var collection2 = this.filter(function(data) {
+			console.log('pattern.test(data.get("name")):',data.get("name"))
+		  	return pattern.test(data.get("name"));
+		});
+		console.log("returning:", collection2)
+		 return collection2
+	}
 	// 
 })
 
@@ -384,32 +405,13 @@ var DocumentListView = BaseView.extend({
 		this.collection.on('change',this.addAll,this);
 		this.collection.on('reset',this.addAll,this);
 	},
-	events:{
-		'click #add_document' : 'createdocument',
-		'change .doc_type' : 'typeModal',
-		'click #doc_type' : 'typeModal',
-		'change .doc_type_choice':'tester'
-	},
+	events:{},
 	template:_.template($('#documents_template').html()),
-	tester:function(){
-		console.log("in tester",$('input[name=options]:checked', '.doc_type_choice').val())
-		$("#doc_type").val($('input[name=options]:checked', '.doc_type_choice').val());
-		
-		if($('input[name=options]:checked', '.doc_type_choice').val()=="Textbook"){
-			var textView = new TextView()
-			$('.doc_type_form').html(textView.render().el)
-		}else{	
-			var noteView = new NoteView()
-			$('.doc_type_form').html(noteView.render().el)
-		}
-	},
-	typeModal:function(){
-		console.log("in here for animmmmmmmmmmm")
-		$("#mainform").animate({
-        	 right: 190
-        },"slow",function(){
-        	$('.bs-example2-modal-sm').modal('toggle')
-        });
+	search:function(letters){
+		console.log("in documentListView(): search() for:",letters)
+		// this.collection.search(letters)
+		this.filtered = this.collection.search(letters)
+		this.addFiltered();
 	},
 	createdocument:function(){
 		console.log("in DocumentListView: createDocument",this.collection)
@@ -444,6 +446,13 @@ var DocumentListView = BaseView.extend({
 		this.collection.forEach(this.addOne,this)
 		return this
 	},
+	addFiltered:function(){
+		console.log("in DocumentListView: addAll(),",this.collection.length)
+		$('#documentlist').html('')
+		// $('tr').not(function(){if ($(this).has('th').length){return true}}).remove();
+		this.filtered.forEach(this.addOne,this)
+		return this
+	},
 	render:function(){
 		this.$el.html(this.template())
 		return this
@@ -451,12 +460,26 @@ var DocumentListView = BaseView.extend({
 })
 // ============================================================
 var Shop = Backbone.Model.extend({
+	urlRoot:'/api/shops/',
+	idAttribute:"shop_id"
 })
 
 var ShopView =BaseView.extend({	
 	tagName:'tr',
 	initialize:function(){},
-	events:{},
+	events:{
+		'click .getshop' : 'getDetails'
+
+	},
+	getDetails:function(id){
+		var that = this
+		console.log("in ShopListView(): getshop() :",this.model,this.model.get("shop_id"))
+		this.model.fetch().done(function(data){
+			console.log("got shopdetails for:",data.shopName)
+			Session.set("shop_name",data.shopName)
+		})
+		
+	},
 	template:_.template($('#shop_item_template').html()),
 	render:function(){
 		this.$el.html(this.template(this.model.toJSON()))
@@ -475,10 +498,8 @@ var ShopListView = BaseView.extend({
 		this.collection.on('add',this.addOne,this)
 		this.collection.on('reset',this.addAll,this)
 	},
-	events:{
-
-	},
 	template:_.template($('#shops_template').html()),
+
 	addOne:function(shop){
 		var shopView = new ShopView({model:shop})
 		$('#shoplist').append(shopView.render().el)
@@ -668,6 +689,7 @@ var Router = BaseRouter.extend({
 
 			setView(view);
 		},
+
 		showAddShop:function(){
 			console.log("in router(): showDashboard(): ")
 			var headerView = new HeaderView();
@@ -678,16 +700,21 @@ var Router = BaseRouter.extend({
 
 		},
 		showMyShops:function(){
+
 			this.showDashboard()
 		},
 
 		showDashboard:function(){
+			// leftMenuView.remove()
+			$('.leftnav').empty()
+			$('.rightnav').empty()
 			console.log("in router(): showDashboard(): ")
 			var headerView = new HeaderView();
 			$('.header').html(headerView.render('Logout').el)
 			
 			this.changeView(dashboardView);
 			dashboardView.myShops();
+			dashboardView.delegateEvents();
 		},
 
 		showShops:function(){
@@ -719,14 +746,17 @@ var Router = BaseRouter.extend({
 
 			this.changeView(documentListView);
 			documentListView.delegateEvents();
-			$('.bs-example2-modal-sm').on('hidden.bs.modal', function (e) {
-			  console.log("in here222222 for animmmmmmmmmmm")
-					
-			        $("#mainform").animate({
-			        	 right: 0
-			        },"slow");
-			        
+			$('.sub-modal').on('hidden.bs.modal', function (e) {
+
+					if(leftMenuView.subModal == ''){
+
+				        $("#mainform").animate({
+				        	 right: 0
+				        },"slow");
+				        
+					}
 			})	
+				
 		},
 
 		showResetLinkSend:function(){
@@ -859,11 +889,14 @@ var AddShopView = BaseView.extend({
 })
 
 var LeftMenuView = BaseView.extend({
-	initialize:function(){},
+	initialize:function(){
+		this.subModal = '' 
+	},
 	events:{
 		'click #add_document' : 'createdocument',
 		'change .doc_type' : 'typeModal',
 		'click #doc_type' : 'typeModal',
+		'click #course' : 'courseModal',
 		'change .doc_type_choice':'tester'
 	},
 	createdocument:function(){
@@ -881,17 +914,56 @@ var LeftMenuView = BaseView.extend({
 			$('.doc_type_form').html(noteView.render().el)
 		}
 	},
+	courseModal:function(){
+		
+		console.log("this.subModal:",$("#mainform").css('right'),"::",this.subModal)
+		if(this.subModal=="courseModal" || this.subModal=="" ){	
+			this.subModal =  this.subModal == "courseModal" ? "":"courseModal"
+			$("#mainform").animate({
+	        	 right: 190
+	        },"slow",function(){
+	        	
+	        	$('.bs-example3-modal-sm').modal('toggle')
+	        });
+
+	       
+		}else{
+			console.log("already typeModal present",this.subModal)
+			$('.type-modal').modal('toggle')
+			$('.course-modal').modal('toggle')
+			this.subModal =  this.subModal == "courseModal" ? "":"courseModal"
+		}
+		
+		console.log("subModal:::::::",this.subModal)
+	},
 	typeModal:function(){
-		console.log("in here for animmmmmmmmmmm")
-		$("#mainform").animate({
+		
+		if(this.subModal=="typeModal" || this.subModal=="" ){	
+			this.subModal = (this.subModal == "typeModal" ? "":"typeModal")
+			$("#mainform").animate({
         	 right: 190
         },"slow",function(){
         	$('.bs-example2-modal-sm').modal('toggle')
         });
+
+	       
+		}else{
+			console.log("already courseModal present",this.subModal)
+			$('.course-modal').modal('toggle')
+			$('.type-modal').modal('toggle')
+			this.subModal = (this.subModal == "typeModal" ? "":"typeModal")
+		}
+		
+		console.log("subModal:::::::",this.subModal)
+		
 	},
 	template:_.template($('#leftMenu_template').html()),
 	render:function(){
-		this.$el.html(this.template())
+		
+		this.$el.html(this.template({
+			"user_role":Session.get("user_role"),
+			"shop_name":Session.get("shop_name")
+		}))
 		return this
 	}
 })
@@ -906,7 +978,6 @@ var RightMenuView = BaseView.extend({
 	}
 })
 
-
 var DashboardView = BaseView.extend({
 	initialize:function(){
 		// this.myShops();
@@ -916,8 +987,8 @@ var DashboardView = BaseView.extend({
 		'click .addshop' : 'addShop'
 	},
 	addShop:function(e){
-		if(e)
-		 { e.preventDefault() }
+		// if(e)
+		//  { e.preventDefault() }
 		var addShopView = new AddShopView()
 		$('#dashboard_container').html(addShopView.render().el)
 		Backbone.history.navigate('dashboard/addshop')
@@ -1163,11 +1234,17 @@ var HomeView = BaseView.extend({
 var HeaderView = BaseView.extend({
 	template:_.template($('#header_template').html()),
 	events : {
+		"keyup #searchdoc" : "callSearcher",
 		'click .logout'  : 'logout',
 		'click .register': 'register',
 		'click .login'   : 'login',
 		'click .profile' : 'profile',
 		'click .shops' : 'shops'  
+	},
+	callSearcher:function(e){
+		var letters = $("#searchdoc").val();
+		documentListView.search(letters)
+
 	},
 	shops:function(){
 		// router.navigate("dashboard",{trigger:true})
