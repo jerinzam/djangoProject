@@ -277,8 +277,9 @@ var SessionModel = Backbone.Model.extend({
 						Backbone.history.navigate('dashboard', { trigger : true });
 					}
 					else if (response.role == "employee"){
-						Backbone.history.navigate('mydocs', { trigger : true });
 						that.set('shop_name',response.shopname);
+						Backbone.history.navigate('mydocs', { trigger : true });
+
 					}
 					// Backbone.history.navigate('home', { trigger : true });
 				}
@@ -523,7 +524,6 @@ var Order = Backbone.Model.extend({
 })
 
 var OrderView = BaseView.extend({
-	tagName:'tr',
 	template:_.template($("#order_item_template").html()),
 	render:function(){
 		this.$el.append(this.template(this.model.toJSON()))
@@ -579,12 +579,13 @@ var OrderListView = BaseView.extend({
 	},
 	addOne:function(model){
 		var view = new OrderView({model:model})
-		$('#orderslist').append(view.render().el)
+		$('#orderlist').append(view.render().el)
 	},
 	addAll:function(){
 		console.log("in OrderListView(): addAll() : length",this.collection.length)
-		$('tr').not(function(){if ($(this).has('th','thead').length){return true}}).remove();
+		$('#orderlist').html('')
 		this.collection.forEach(this.addOne,this)
+		return this
 	},
 	render:function(){
 		this.$el.html(this.template());
@@ -600,12 +601,14 @@ var documentList = new DocumentList()
 var documentListView = new DocumentListView({collection:documentList})
 var shopList = new ShopList()
 var shopListView = new ShopListView({collection:shopList})
+
 // orderList.startLongPolling();
 
 
 var Router = BaseRouter.extend({
 
 		routes : {
+			'myorders' : 'showMyOrders',
 			'dashboard/addshop' : 'showAddShop',
 			'dashboard/myshops' : 'showMyShops',
 			'dashboard' 	: 'showDashboard',
@@ -697,8 +700,8 @@ var Router = BaseRouter.extend({
 			
 			this.changeView(dashboardView);
 			dashboardView.addShop();
-
 		},
+
 		showMyShops:function(){
 
 			this.showDashboard()
@@ -728,34 +731,26 @@ var Router = BaseRouter.extend({
 			this.changeView(shopListView);
 		},
 
-		showmydocs:function(){
-			console.log("in router(): showmydocs(): ")
-			documentList.fetch({reset:true}).done(function(data){
-				console.log("in router(): showmydocs(): - done ")
-				console.log("number of docs:", data.length)
-			})
-			var leftMenuView = new LeftMenuView();
-			$('.leftnav').html(leftMenuView.render().el)
-
-			var rightMenuView = new RightMenuView();
-			$('.rightnav').html(rightMenuView.render().el)
-
+		showMyOrders:function(){
+			
 			var headerView = new HeaderView();
 			$('.header').html(headerView.render('Logout').el)
 			// $('.document_container').html(documentListView.render())
 
-			this.changeView(documentListView);
-			documentListView.delegateEvents();
-			$('.sub-modal').on('hidden.bs.modal', function (e) {
+			this.changeView(employeeMainView);
+			Backbone.trigger('showMyOrders_event')
 
-					if(leftMenuView.subModal == ''){
+		},
 
-				        $("#mainform").animate({
-				        	 right: 0
-				        },"slow");
-				        
-					}
-			})	
+		showmydocs:function(){
+			console.log("in router(): showmydocs(): ")		
+
+			var headerView = new HeaderView();
+			$('.header').html(headerView.render('Logout').el)
+
+			this.changeView(employeeMainView);
+			Backbone.trigger('showMyDocs_event')
+			
 				
 		},
 
@@ -891,13 +886,38 @@ var AddShopView = BaseView.extend({
 var LeftMenuView = BaseView.extend({
 	initialize:function(){
 		this.subModal = '' 
+		Backbone.on('shoMyDocs',this.myDocs)
+		Backbone.on('myOrders',this.myOrders)
+
+			
 	},
 	events:{
 		'click #add_document' : 'createdocument',
 		'change .doc_type' : 'typeModal',
 		'click #doc_type' : 'typeModal',
 		'click #course' : 'courseModal',
-		'change .doc_type_choice':'tester'
+		'change .doc_type_choice':'tester',
+		'click .orders' : 'myOrders',
+		'click .docs' : 'myDocs',
+		'hidden.bs.modal .sub-modal' : 'modalAdjust',
+	},
+	modalAdjust:function(){
+
+		if(this.subModal == ''){
+
+			        $("#mainform").animate({
+			        	 right: 0
+			        },"slow");
+		}
+	},
+	myDocs:function(){
+		Backbone.trigger('showMyDocs_event')
+		router.navigate('mydocs')
+	},
+	myOrders:function(){
+		Backbone.trigger('showMyOrders_event')
+		router.navigate('myorders')
+
 	},
 	createdocument:function(){
 		documentListView.createdocument()
@@ -955,11 +975,11 @@ var LeftMenuView = BaseView.extend({
 		}
 		
 		console.log("subModal:::::::",this.subModal)
-		
+	 	
 	},
 	template:_.template($('#leftMenu_template').html()),
 	render:function(){
-		
+		console.log("in LeftMenuView(): render()")
 		this.$el.html(this.template({
 			"user_role":Session.get("user_role"),
 			"shop_name":Session.get("shop_name")
@@ -1285,11 +1305,50 @@ var ApplicationModel = Backbone.Model.extend({
 	}
 });
 
+var EmployeeMainView = BaseView.extend({
+	initialize:function(){
+		console.log("initializing EmployeeMainView()")
+		this.leftMenuView = new LeftMenuView()
+		this.rightMenuView = new RightMenuView()
+		
+		Backbone.on('showMyDocs_event',this.showMyDocs)
+		Backbone.on('showMyOrders_event',this.showMyOrders)
+
+	},
+	template:_.template($('#emp_template').html()),
+	events:{},
+	showMyDocs:function(){
+		console.log("in EmployeeMainView(): showMyDocs()")
+		documentList.fetch({reset:true}).done(function(data){
+				console.log("in EmployeeMainView(): showMyDocs(): -fetch - done ",data)
+				console.log("number of docs:", data.length)
+		})
+		documentListView.setElement(this.$('.centerview')).render();
+	},
+	showMyOrders:function(){
+		console.log("in EmployeeMainView(): showMyOrders()")
+		orderList.fetch({reset:true}).done(function(data){
+				console.log("in EmployeeMainView(): showMyOrders(): -fetch - done ",data)
+		})
+		orderListView.setElement(this.$('.centerview')).render();
+
+	},
+	render:function(){
+		console.log("in EmployeeMainView(): render();")
+		this.$el.html(this.template())
+		this.leftMenuView.setElement(this.$('.leftnav')).render();
+		this.rightMenuView.setElement(this.$('.rightnav')).render();
+		// $('.rightnav').html(this.rightMenuView.render().el)
+		return this
+	}
+})
+
 
 var app = new ApplicationModel();
 app.start(); 
 var router = new Router();
 var dashboardView = new DashboardView()
+var employeeMainView = new EmployeeMainView()
 
 var NotificationView = Backbone.View.extend({
  
@@ -1370,6 +1429,9 @@ var NotificationView = Backbone.View.extend({
     }
  
 });
+
+
+var vent = _.extend({}, Backbone.Events);
 
 $.ajaxSetup({
     statusCode: {

@@ -32,17 +32,25 @@
 		<div id="message">
 		</div>
 	</div>
-	<div class="leftnav">
-	</div>
+	
+	
 	<div class="main-container">
+		
 	</div>
-	<div class="rightnav">
-	</div>
+	
 
 	<div class="modal2">
 	</div>
 
-	
+<script type="text/template" id="emp_template">
+	<div class="leftnav">
+	</div>
+	<div class="centerview">
+	</div>
+	<div class="rightnav">
+	</div>
+</script>
+
 <script type="text/template" id="resetlinksend">
 	<h3>A mail has been sent to you</h3>
 	<h5>Please click on the link to reset your password</h5>
@@ -93,7 +101,7 @@
 </script>
 
 <script type="text/template" id="registration_template">
-	<div class="hero-unit">
+	<div class="hero-unit container">
 		  <form class="form-horizontal">
 		    <div class="control-group">
 		      <label class="control-label" for="username">Username</label>
@@ -139,7 +147,7 @@
 </script>
 <script type="text/template" id="login_template">
 	
-	<div class="hero-unit">
+	<div class="hero-unit container">
 	  <form class="form-horizontal">
 	    <div class="control-group">
 	      <label class="control-label" for="inputEmail">Username</label>
@@ -242,29 +250,27 @@
 </script>
 
 <script type="text/template" id="home_template">
-	<button class="emp">Employee</button>
-	<div class="hero-unit">
-		<h3>Home Page</h3>
-		<table class="col-md-5" id="orderslist">
-		  <thead>
-		    <tr>
-		    	<th>Customer</th>
-				<th>File</th>
-				<th>Qty</th>
-		      
-		    </tr>
-		  </thead>
-		  <tbody>
-		   
-		  </tbody>
-		</table>
+	<div class="order_container">
+	   	<div class="panel-group col-md-4 accordian" id="orderlist" role="tablist" aria-multiselectable="true">
+		</div>
 	</div>
 </script>
 
 <script type="text/template" id="order_item_template">
-	<td class="mdl-data-table__cell--non-numeric"><a href="#" id="getDetails"> <%= customer %> </a></td>
-  	<td><a target="_blank" href="<%- order_doc %>"><%- order_doc %></a></td>
-  	<td>1</td>	
+	<div class="panel panel-default">
+		<div class="panel-heading" role="tab" id="heading_<%- customer %>">
+		  
+		    <a role="button" data-toggle="collapse" data-parent="#orderlist" href="#<%- customer %>" aria-expanded="true" aria-controls="<%- customer %>">
+		      <%- customer %>
+		    </a>		  
+
+		</div>
+		<div id="<%- customer %>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_<%- customer %>">
+			<div class="panel-body">
+			this is the body
+			</div>
+		</div>
+	</div>
 </script>
 
 <script type="text/template" id="leftMenu_template">
@@ -276,8 +282,8 @@
           	<% } %>
             <li><a role="button" class="addshop" data-toggle="modal" data-target=".bs-example-modal-sm">Upload a Document</a>
             </li>
-            <li><a href="#mydocs" class="mydocuments">My Documents</a></li>
-            <li><a href="" class="myshops">Orders</a></li>
+            <li><a role="button" class="docs">My Documents</a></li>
+            <li><a role="button"  class="orders">Orders</a></li>
           </ul>	
     </div>
     <div class="modal fade bs-example-modal-sm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
@@ -377,25 +383,25 @@
 
 <script type="text/template" id="document_item_template">
 	<div class="panel panel-default">
-			<div class="panel-heading" role="tab" id="heading_<%- name %>">
-			  
-			    <a role="button" data-toggle="collapse" data-parent="#documentlist" href="#<%- name %>" aria-expanded="true" aria-controls="<%- name %>">
-			      <%- name %>
-			    </a>		  
+		<div class="panel-heading" role="tab" id="heading_<%- name %>">
+		  
+		    <a role="button" data-toggle="collapse" data-parent="#documentlist" href="#<%- name %>" aria-expanded="true" aria-controls="<%- name %>">
+		      <%- name %>
+		    </a>		  
 
-			</div>
-			<div id="<%- name %>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_<%- name %>">
-			  <div class="panel-body">
-			    this is the body
-			  </div>
+		</div>
+		<div id="<%- name %>" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="heading_<%- name %>">
+			<div class="panel-body">
+			this is the body
 			</div>
 		</div>
-	</div>	
+	</div>
+		
 </script>
 
 <script type="text/template" id="documents_template">
 	<div class="document_container">
-	   	<div class="panel-group col-md-4" id="documentlist" role="tablist" aria-multiselectable="true">
+	   	<div class="panel-group col-md-4 accordian" id="documentlist" role="tablist" aria-multiselectable="true">
 		</div>
 	</div>
 </script>

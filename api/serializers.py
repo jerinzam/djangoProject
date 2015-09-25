@@ -14,7 +14,7 @@ class OrderSerializer(serializers.ModelSerializer):
     shop = serializers.ReadOnlyField(source='shop.company_name')
     class Meta:
         model = Order
-        fields = ('id', 'customer', 'order_doc','status','shop','comments')
+        fields = ('order_id', 'customer', 'order_doc','status','shop','comments')
 
 class ShopSerializer(serializers.ModelSerializer):
     employee = serializers.ReadOnlyField(source='employee.username')

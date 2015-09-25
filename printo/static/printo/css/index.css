@@ -277,7 +277,7 @@ body.loading .modal2 {
 	margin-top: -35px;
 	margin-left: 230px;
 }*/
-#documentlist{
+.accordian{
 
 	margin-left:2px;
 	padding-left: 5px;
@@ -287,7 +287,7 @@ body.loading .modal2 {
 	border-right: 1px solid grey;
 	min-height: 500px;
 }
-#documentlist th{
+.accordian th{
 	text-align: center;
 }
 .sub-modal{
