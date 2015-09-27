@@ -68,4 +68,22 @@ class OrderDetail(OrderMixin,RetrieveUpdateDestroyAPIView):
 
 
 
+def upload(request):
+	pass
+
+
+def edit(request, id)
+def index_shop(request):
+	pass
+
+
+def order_list(request):
+	pass
+
+
+def shop_detail(request, id):
+	pass
+
+
+
 

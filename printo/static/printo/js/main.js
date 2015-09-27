@@ -593,6 +593,15 @@ var OrderListView = BaseView.extend({
 	}
 })
 // ============================================================
+var ShopProfileView = BaseView.extend({
+	initialize:function(){},
+	events:{},
+	template:_.template($('#shop_profile_template').html()),
+	render:function(){
+		this.$el.html(this.template())
+		return this;
+	}
+})
 var Session = new SessionModel()
 
 var orderList = new OrderList()
@@ -739,7 +748,6 @@ var Router = BaseRouter.extend({
 
 			this.changeView(employeeMainView);
 			Backbone.trigger('showMyOrders_event')
-
 		},
 
 		showmydocs:function(){
@@ -749,9 +757,7 @@ var Router = BaseRouter.extend({
 			$('.header').html(headerView.render('Logout').el)
 
 			this.changeView(employeeMainView);
-			Backbone.trigger('showMyDocs_event')
-			
-				
+			Backbone.trigger('showMyDocs_event')		
 		},
 
 		showResetLinkSend:function(){
@@ -892,6 +898,7 @@ var LeftMenuView = BaseView.extend({
 			
 	},
 	events:{
+		'click .shop_profile' : 'shopProfile',
 		'click #add_document' : 'createdocument',
 		'change .doc_type' : 'typeModal',
 		'click #doc_type' : 'typeModal',
@@ -909,6 +916,11 @@ var LeftMenuView = BaseView.extend({
 			        	 right: 0
 			        },"slow");
 		}
+	},
+	shopProfile:function(){
+		console.log("hereeeeeeeeeeeeeeeeeeeeeeee")
+		Backbone.trigger('showShopProfile_event')
+		router.navigate('profile')
 	},
 	myDocs:function(){
 		Backbone.trigger('showMyDocs_event')
@@ -1310,13 +1322,19 @@ var EmployeeMainView = BaseView.extend({
 		console.log("initializing EmployeeMainView()")
 		this.leftMenuView = new LeftMenuView()
 		this.rightMenuView = new RightMenuView()
+		this.shopProfileView = new ShopProfileView()
 		
 		Backbone.on('showMyDocs_event',this.showMyDocs)
 		Backbone.on('showMyOrders_event',this.showMyOrders)
+		Backbone.on('showShopProfile_event',this.showShopProfile)
 
 	},
 	template:_.template($('#emp_template').html()),
 	events:{},
+	showShopProfile:function(){
+		console.log("in EmployeeMainView(): showShopProfile()")
+		new ShopProfileView().setElement(this.$('.centerview')).render();
+	},
 	showMyDocs:function(){
 		console.log("in EmployeeMainView(): showMyDocs()")
 		documentList.fetch({reset:true}).done(function(data){
