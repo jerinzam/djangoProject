@@ -66,23 +66,27 @@ class OrderDetail(OrderMixin,RetrieveUpdateDestroyAPIView):
 		serializer.save(status=self.request.data.get('status'),partial=True)
 
 
+# @login_required
+# def shop_register(request):
+	
+
+# @login_required
+# def upload(request):
+# 	pass
+
+# @login_required
+# def edit(request, id):
+
+# def index_shop(request):
+# 	pass
 
 
-def upload(request):
-	pass
+# def order_list(request):
+# 	pass
 
 
-def edit(request, id)
-def index_shop(request):
-	pass
-
-
-def order_list(request):
-	pass
-
-
-def shop_detail(request, id):
-	pass
+# def shop_detail(request, id):
+# 	pass
 
 
 

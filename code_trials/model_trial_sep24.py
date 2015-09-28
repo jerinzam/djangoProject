@@ -19,7 +19,7 @@ class Shop(models.Model):
 	def __str__(self):
 		return self.shopName
 
-class Organization(models.Model):
+class Organization(modelsd.Model):
 	owner = models.ForeignKey(User, related_name='org_owner')
 	employee = models.ManyToManyField(User, related_name='org_employee',null=True,blank=True)
 	def __str__(self):
@@ -70,9 +70,6 @@ class Course(models.Model)
 	slug = models.SlugField(unique=True)
 	def __str__(self):
 		return self.name
-
-
-from django.contrib.auth.models import User
 
 class Document(models.Model):
 	uuid = models.CharField(max_length=60, unique=True, blank=True)

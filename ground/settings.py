@@ -42,7 +42,7 @@ INSTALLED_APPS = (
     # 
     'rest_framework.authtoken',
     'printo',
-    'api',
+    # 'api',
     'rest_auth',
     # 
     'rest_auth.registration',
@@ -50,6 +50,8 @@ INSTALLED_APPS = (
     'allauth.account',
     #
     'userroles',
+    #starting NEW
+    'printo_app',
 )
 
 
