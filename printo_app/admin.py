@@ -5,7 +5,7 @@ from .models import Organization, Shop, Publisher, Tag, Topic, University, Colle
 
 class DocumentAdmin(admin.ModelAdmin):
 	list_display = ('name','organization','private_user','doc_type', 'pages', 'price', 'is_public','display')
-
+	
 
 class PublisherAdmin(admin.ModelAdmin):
 	prepopulated_fields = {"slug": ("name",)}

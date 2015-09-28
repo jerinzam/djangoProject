@@ -6,6 +6,15 @@ from django.template.defaultfilters import slugify
  
 
 
+
+class UserProfile(models.Model):
+	USER_TYPE_CHOICES = ((1,'owner'),(2,'student'),(3,'Private person'))
+	user = models.OneToOneField(User)
+	profile_picture = models.ImageField(upload_to='documents', null=True, blank=True)
+	user_type = models.IntegerField(choices='USER_TYPE_CHOICES')
+	def __str__(self):
+		return self.user.username
+
 class Organization(models.Model):
 	owner = models.ForeignKey(User, related_name='org_owner')
 	employee = models.ManyToManyField(User, related_name='org_employee',null=True,blank=True)
@@ -105,30 +114,7 @@ class DocType(models.Model):
 	def __str__(self):
 		return self.docType
 
-# ====================================================================
-	# model  : DOCUMENT
-	# fields :	uuid - name of the course
-	# 			organization - 
-	# 			private_user - 
-	# 			name - 
-	# 			doc - 
-	# 			doc_type - 
-	# 			diplay_doc -
-	# 			tags - 
-	# 			topic - 
-	# 			display - 
-	# 			is_public - 
-	# 			is_user_private - 
-	# 			pages - 
-	# 			price - 
-	# 			uploadedDate - 
-	# 			updatedDate - 
-	# 			course - 
-	# 			edition - 
-	# 			author_names - 
-	# 			publisher - 
-	# 			university -
-# ====================================================================
+
 
 class Document(models.Model):
 	uuid = models.CharField(max_length=60, unique=True, blank=True)
@@ -138,9 +124,10 @@ class Document(models.Model):
 	name = models.CharField(max_length=200)
 	# doc = models.FileField(upload_to = upload())
 	doc_type = models.ForeignKey(DocType)
+	pageNoRange = models.CharField(max_length=100)
 	display_doc = models.FileField(upload_to="display_docs/", blank =True)
 	tags = models.ManyToManyField(Tag) #used for searching docs. ee: tkm,parvathy,ECE,motor working,sem5
-	topic = models.ManyToManyField(Topic, blank=True)
+	topic = models.ManyToManyField(Topic, blank=True) 
 	display = models.BooleanField(default=True) #for delete purposes
 	is_public = models.BooleanField(default=False)
 	is_user_private = models.BooleanField(default=False)

@@ -68,8 +68,8 @@ class OrderDetail(OrderMixin,RetrieveUpdateDestroyAPIView):
 
 # @login_required
 # def shop_register(request):
+		
 	
-
 # @login_required
 # def upload(request):
 # 	pass
