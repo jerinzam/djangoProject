@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'autocomplete_light',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -95,7 +96,7 @@ EMAIL_HOST_PASSWORD = '*********'
 DEFAULT_FROM_EMAIL = 'jerinzam@gmail.com'
 
 # added for images
-MEDIA_ROOT = os.path.join(BASE_DIR, 'printo/static/media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'printo_app/static/media')
 MEDIA_URL = '/printo/static/media/'
 
 

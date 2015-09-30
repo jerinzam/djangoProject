@@ -8,10 +8,10 @@ from django.template.defaultfilters import slugify
 
 
 class UserProfile(models.Model):
-	USER_TYPE_CHOICES = ((1,'owner'),(2,'student'),(3,'Private person'))
+	USER_TYPE_CHOICES = ((1,'owner'),(2,'employee'),(3,'Private person'),)
 	user = models.OneToOneField(User)
 	profile_picture = models.ImageField(upload_to='documents', null=True, blank=True)
-	user_type = models.IntegerField(choices='USER_TYPE_CHOICES')
+	userType = models.IntegerField(choices=USER_TYPE_CHOICES)
 	def __str__(self):
 		return self.user.username
 
@@ -124,9 +124,9 @@ class Document(models.Model):
 	name = models.CharField(max_length=200)
 	# doc = models.FileField(upload_to = upload())
 	doc_type = models.ForeignKey(DocType)
-	pageNoRange = models.CharField(max_length=100)
-	display_doc = models.FileField(upload_to="display_docs/", blank =True)
-	tags = models.ManyToManyField(Tag) #used for searching docs. ee: tkm,parvathy,ECE,motor working,sem5
+	pageNoRange = models.CharField(max_length=100,null=True,blank=True)
+	display_doc = models.FileField(upload_to="display_docs", blank =True)
+	tags = models.ManyToManyField(Tag,null=True,blank=True) #used for searching docs. ee: tkm,parvathy,ECE,motor working,sem5
 	topic = models.ManyToManyField(Topic, blank=True) 
 	display = models.BooleanField(default=True) #for delete purposes
 	is_public = models.BooleanField(default=False)

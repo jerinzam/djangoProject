@@ -3,10 +3,12 @@
 	<title>PRINTO</title>
 </head>
 <body>
-	
-	{% for doc in docList %}
-		<li>{{ doc.name }}</li>
-	{% endfor %}
+	<a href="{% 'documentUpload' %}">Upload a Document</a>
+	<div id="content">
+		{% block content %}
+
+		{% endblock %}
+	</div>
 
 </body>
 </html>

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Organization, Shop, Publisher, Tag, Topic, University, College, Course, Branch, DocType, Document
+from .models import Organization, Shop, Publisher, Tag, Topic, University, College, Course, Branch, DocType, Document, UserProfile
 # Register your models here.
 
 
@@ -33,3 +33,4 @@ admin.site.register(Course,CourseAdmin)
 admin.site.register(Branch)
 admin.site.register(DocType)
 admin.site.register(Document,DocumentAdmin)
+admin.site.register(UserProfile)

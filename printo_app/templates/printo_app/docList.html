@@ -1,0 +1,10 @@
+{% extends "index.html" %}
+
+{% block content %}
+
+	{% for doc in docs %}
+	
+		<li><a href='{% url "documentDetail" doc.id %}'>{{ doc.name }} {{ doc.id }}</a></li>
+		
+	{% endfor %}
+{% endblock %}
