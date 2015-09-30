@@ -50,13 +50,11 @@ def docDetail(request,docid):
 
 
 def docEdit(request,docid):
-	import ipdb;ipdb.set_trace();
-	
-	docDetail = DocUploadForm(instance=Document.objects.get(id=docid))
-	for (key, value) in request.POST.items():
-		setattr(docDetail, key, value)
+	# import ipdb;ipdb.set_trace();
+	currentDoc = Document.objects.get(id=docid)
+	docDetail = DocUploadForm(request.POST,instance=currentDoc)
 	docDetail.save()	
-	context = { "doc":docDetail }
+	context = { "msg":docDetail }
 	return HttpResponseRedirect(reverse('documentList'))
 
 
