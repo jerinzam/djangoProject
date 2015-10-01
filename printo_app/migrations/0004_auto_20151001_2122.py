@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('printo_app', '0007_auto_20150929_0846'),
+        ('printo_app', '0003_auto_20151001_2120'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='pageNoRange',
-            field=models.CharField(blank=True, null=True, max_length=100),
+            model_name='shop',
+            name='rate',
+            field=models.IntegerField(default=0.0),
         ),
     ]

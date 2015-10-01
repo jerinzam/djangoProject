@@ -2,18 +2,19 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import django.utils.timezone
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('printo_app', '0012_auto_20150929_1444'),
+        ('printo_app', '0001_initial'),
     ]
 
     operations = [
-        migrations.AlterField(
+        migrations.AddField(
             model_name='document',
-            name='tags',
-            field=models.ManyToManyField(blank=True, null=True, to='printo_app.Tag'),
+            name='updatedDate',
+            field=models.DateTimeField(default=django.utils.timezone.now, editable=False),
         ),
     ]

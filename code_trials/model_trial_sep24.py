@@ -40,15 +40,12 @@ class Topic(models.Model)
 	def __str__(self):
 		return self.name
 
-
 class University(models.Model)
 	name = models.CharField(max_length=200, unique=True)
 	slug = models.SlugField(unique=True)
 	code = models.CharField(max_length=4)
 	def __str__(self):
 		return self.name
-
-
 
 class College(models.Model)
 	name = models.CharField(max_length=200, unique=True)

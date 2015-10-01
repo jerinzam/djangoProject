@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.utils import timezone
 import time, random,hashlib
 from django.template.defaultfilters import slugify
  
@@ -18,15 +18,40 @@ class UserProfile(models.Model):
 class Organization(models.Model):
 	owner = models.ForeignKey(User, related_name='org_owner')
 	employee = models.ManyToManyField(User, related_name='org_employee',null=True,blank=True)
+	docCount = models.IntegerField(default=0)
 	def __str__(self):
 		return self.owner.username
+
+class Service(models.Model):
+	name = models.CharField(max_length=200, unique=True)
+	slug = models.SlugField(unique=True)
+	def save(self):
+		if not self.id:
+			self.slug = slugify(self.name)
+			super(Service, self).save()
+	def __str__(self):
+		return self.name
 
 class Shop(models.Model):
 	employee =  models.ForeignKey(User,related_name='shop_employee',unique=True)
 	owner = models.ForeignKey(Organization,related_name='shop_owner')
 	shopName = models.CharField(max_length=100)
+	orderCount = models.IntegerField(default=0)
+	createdOn = models.DateTimeField(auto_now_add=True,null=True)
+	rate = models.DecimalField(max_digits=4,decimal_places=2,default=0.0)
+	services = models.ManyToManyField(Service,blank=True)
 	def __str__(self):
 		return self.shopName
+
+class Author(models.Model):
+	name = models.CharField(max_length=200, unique=True)
+	slug = models.SlugField(unique=True)
+	def save(self):
+		if not self.id:
+			self.slug = slugify(self.name)
+			super(Author, self).save()
+	def __str__(self):
+		return self.name
 
 class Publisher(models.Model):
 	name = models.CharField(max_length=200, unique=True)
@@ -37,8 +62,17 @@ class Publisher(models.Model):
 			super(Publisher, self).save()
 	def __str__(self):
 		return self.name
-	
 
+class Author(models.Model):
+	name = models.CharField(max_length=200, unique=True)
+	slug = models.SlugField(unique=True)
+	def save(self):
+		if not self.id:
+			self.slug = slugify(self.name)
+			super(Author, self).save()
+	def __str__(self):
+		return self.name
+	
 class Tag(models.Model):
 	name = models.CharField(max_length=200, unique=True)
 	slug = models.SlugField(unique=True)
@@ -122,7 +156,7 @@ class Document(models.Model):
 	# shop = models.ForeignKey(Shop)
 	private_user = models.ForeignKey(User, blank=True, null =True)
 	name = models.CharField(max_length=200)
-	# doc = models.FileField(upload_to = upload())
+	# doc = models .FileField(upload_to = upload())
 	doc_type = models.ForeignKey(DocType)
 	pageNoRange = models.CharField(max_length=100,null=True,blank=True)
 	display_doc = models.FileField(upload_to="display_docs", blank =True)
@@ -133,8 +167,8 @@ class Document(models.Model):
 	is_user_private = models.BooleanField(default=False)
 	pages = models.IntegerField() #should be auto filled
 	price = models.DecimalField(max_digits=6,decimal_places=2) #should be auto filled
-	uploadedDate = models.DateTimeField(auto_now_add=True) 
-	updatedDate = models.DateTimeField(auto_now=True)
+	uploadedDate = models.DateTimeField(auto_now_add=True,null=True) 
+	updatedDate = models.DateTimeField(default=timezone.now,editable=False)
 	course = models.ManyToManyField(Course, blank =True)
 	edition = models.IntegerField(null =True, blank = True)
 	author_names = models.TextField(null =True, blank = True)

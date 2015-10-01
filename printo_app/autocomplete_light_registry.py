@@ -1,9 +1,33 @@
 import autocomplete_light.shortcuts as al
-from .models import Document, Tag, Topic, University
+from .models import Document, Tag, Topic, University, Service
 import autocomplete_light
 from django import http
 
 
+class ServiceAutocomplete(autocomplete_light.AutocompleteModelBase):
+	model = Service
+	search_fields = ['name',]
+	attrs={
+	    'placeholder': 'Please enter your services',
+	    'data-autocomplete-minimum-characters': 1,
+	}
+	widget_attrs={
+		'autocomplete' : 'remote',
+		'data-widget-bootstrap':'rest_model',
+	    'data-widget-maximum-values': 4,
+	    'class': 'modern-style',
+	}
+	def autocomplete_html(self):
+	    html = super(ServiceAutocomplete, self).autocomplete_html()
+	    html += '<span data-value=000>Create New TAG</span>'
+	    return html
+
+	def post(self, request, *args, **kwargs):
+		# import ipdb; ipdb.set_trace();
+		new_service = Service()
+		new_service.name = request.POST['name']
+		new_service.save()
+		return http.HttpResponse(new_service.pk)
 
 class TagAutocomplete(autocomplete_light.AutocompleteModelBase):
 	model = Tag
@@ -63,11 +87,13 @@ class UniversityAutocomplete(autocomplete_light.AutocompleteModelBase):
 	    'data-autocomplete-minimum-characters': 1,
 	}
 	widget_attrs={
+
 	    'data-widget-maximum-values': 1,
 	    'class': 'modern-style',
 	}
 
 
+autocomplete_light.register(Service,ServiceAutocomplete)
 autocomplete_light.register(Tag,TagAutocomplete)
 autocomplete_light.register(Topic,TopicAutocomplete)
 autocomplete_light.register(University,UniversityAutocomplete)

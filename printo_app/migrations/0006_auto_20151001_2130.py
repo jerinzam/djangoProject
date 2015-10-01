@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('printo_app', '0011_auto_20150929_1437'),
+        ('printo_app', '0005_organization_doccount'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='document',
-            name='tags',
-            field=models.ManyToManyField(default='parvathy', blank=True, null=True, to='printo_app.Tag'),
+            model_name='shop',
+            name='rate',
+            field=models.DecimalField(default=0.0, max_digits=4, decimal_places=2),
         ),
     ]
