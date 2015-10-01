@@ -39,18 +39,18 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'rest_framework',
+    # 'rest_framework',
     # 
-    'rest_framework.authtoken',
+    # 'rest_framework.authtoken',
     'printo',
     # 'api',
-    'rest_auth',
+    # 'rest_auth',
     # 
-    'rest_auth.registration',
-    'allauth',
-    'allauth.account',
+    # 'rest_auth.registration',
+    # 'allauth',
+    # 'allauth.account',
     #
-    'userroles',
+    # 'userroles',
     #starting NEW
     'printo_app',
 )
