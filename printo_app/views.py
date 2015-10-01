@@ -7,7 +7,7 @@ from .forms import DocUploadForm, ShopEditForm
 
 # Create your views here.
 
-def indexEmp(request,shopid):
+def indexEmp(request):
 	context = {'shop':shopid}
 	return render(request,'index.html',context)
 
@@ -48,14 +48,13 @@ def docDetail(request,docid):
 	context = {"docEditForm":form,"doc":docDetail}
 	return render(request,'printo_app/docDetail.html',context)
 
-def docEdit(request,docid):
+def docEditSave(request,docid):
 	# import ipdb;ipdb.set_trace();
 	currentDoc = Document.objects.get(id=docid)
 	docDetail = DocUploadForm(request.POST,request.FILES,instance=currentDoc)
 	docDetail.save()	
 	context = { "msg":docDetail }
 	return HttpResponseRedirect(reverse('documentList'))
-
 
 def shopProfile(request,shopid=None):
 	# import ipdb; ipdb.set_trace()
@@ -75,5 +74,5 @@ def shopEditSave(request):
 	shopForm.save()
 	return HttpResponseRedirect(reverse('shopProfile'))
 
-
+def indexOwner(request)
 
