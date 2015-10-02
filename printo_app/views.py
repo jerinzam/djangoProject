@@ -74,5 +74,5 @@ def shopEditSave(request):
 	shopForm.save()
 	return HttpResponseRedirect(reverse('shopProfile'))
 
-def indexOwner(request)
+# def indexOwner(request)//
 
